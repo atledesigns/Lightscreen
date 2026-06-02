@@ -1,0 +1,20 @@
+name: Lightscreen
+options:
+  bundleIdPrefix: com.atle
+  deploymentTarget:
+    macOS: "26.0"
+
+targets:
+  Lightscreen:
+    type: application
+    platform: macOS
+    sources:
+      - App
+      - Modules
+      - UI
+      - Resources
+    info:
+      path: Info.plist
+      properties:
+        LSUIElement: true
+

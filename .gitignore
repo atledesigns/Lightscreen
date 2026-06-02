@@ -1,0 +1,27 @@
+# Xcode default-ish ignores
+.DS_Store
+
+# Build products
+DerivedData
+build/
+
+# Xcode workspaces and user data
+*.xcworkspace
+!*.xcworkspace/xcshareddata
+*.xcuserstate
+*.xcuserdata
+*.xccheckout
+
+# User interface files
+*.hmap
+*.ipa
+*.dSYM
+*.xcarchive
+
+# SwiftPM
+.build/
+.swiftpm/
+
+# CocoaPods
+Pods/
+
