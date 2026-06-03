@@ -31,6 +31,14 @@ final class EditorModel: ObservableObject {
     @Published var draft: BeautifyDraft
     @Published private(set) var rendered: NSImage?
 
+    /// How many panels a tall capture is split into (1 = not split), and where
+    /// the cuts fall (fractions down from the top). Kept out of the draft so
+    /// dragging a cut line doesn't trigger a full re-render.
+    @Published var splitCount = 1
+    @Published var splitFractions: [Double] = []
+
+    private static let ratioKey = "last_aspect_ratio"
+
     /// Fired after a successful save (so the window closes and the library refreshes).
     var onSaved: (() -> Void)?
     /// Fired when the user backs out without saving.
@@ -51,8 +59,54 @@ final class EditorModel: ObservableObject {
         self.name = input.suggestedName
         let sampled = ColorSampler.dominantColors(input.image, count: 2)
         self.autoColors = (sampled.first ?? .blue, sampled.count > 1 ? sampled[1] : .purple)
-        self.draft = BeautifyDraft.makeDefault(from: input.image)
+        var draft = BeautifyDraft.makeDefault(from: input.image)
+        // Restore the sticky output ratio from last session.
+        if let saved = UserDefaults.standard.string(forKey: Self.ratioKey),
+           let option = AspectRatioOption(rawValue: saved) {
+            draft.ratioOption = option
+        }
+        self.draft = draft
         rerender()
+    }
+
+    /// Remember the chosen ratio for next session. Call when it changes.
+    func persistRatio() {
+        UserDefaults.standard.set(draft.ratioOption.rawValue, forKey: Self.ratioKey)
+    }
+
+    // MARK: - Splitting tall captures
+
+    /// The captured image's own width ÷ height (chrome aside — close enough to
+    /// decide whether splitting is on offer).
+    private var contentAspect: Double {
+        let s = original.size
+        return s.height > 0 ? Double(s.width / s.height) : 1
+    }
+
+    /// Whether the "Split into…" option should show: the shot is clearly tall,
+    /// or taller than the current output ratio would comfortably hold.
+    var canSplit: Bool {
+        if contentAspect < 0.9 { return true }
+        if let ratio = draft.resolvedAspectRatio, contentAspect < ratio * 0.9 { return true }
+        return false
+    }
+
+    func setSplit(_ count: Int) {
+        splitCount = max(1, count)
+        splitFractions = Splitter.evenFractions(splitCount)
+    }
+
+    func clearSplit() {
+        splitCount = 1
+        splitFractions = []
+    }
+
+    /// Move one cut line, keeping it between its neighbours.
+    func updateFraction(_ index: Int, to value: Double) {
+        guard splitFractions.indices.contains(index) else { return }
+        let lower = index > 0 ? splitFractions[index - 1] + 0.02 : 0.02
+        let upper = index < splitFractions.count - 1 ? splitFractions[index + 1] - 0.02 : 0.98
+        splitFractions[index] = min(max(value, lower), upper)
     }
 
     /// Repaint the preview from the current draft. Called on every change.
@@ -116,37 +170,62 @@ final class EditorModel: ObservableObject {
 
     // MARK: - Saving
 
-    /// Render the full-resolution styled image and file it. New library entry —
-    /// the original stays untouched.
+    /// Render the full-resolution styled image and file it. When split is on,
+    /// saves one PNG per panel as `name_01.png`, `name_02.png`, … New library
+    /// entries — the original stays untouched.
     func commit(name: String, tags: [String], choice: SaveChoice) -> Bool {
-        guard let data = BeautifyRenderer.pngData(original, style: draft.toStyle()) else {
+        let outputs = renderOutputs(named: name)
+        guard !outputs.isEmpty else {
             NSLog("Lightscreen: beautify render produced no data")
             return false
         }
+
         do {
+            let folder: URL?
             switch choice {
-            case .library:
-                try store.saveToLibrary(
-                    data: data, name: name, tags: tags,
-                    captureMode: input.captureMode,
-                    outputMode: OutputMode.beautified.rawValue,
-                    sourceAppBundleID: input.sourceAppBundleID,
-                    capturedAt: input.capturedAt
-                )
-            case .folder(let folder):
-                try store.saveToFolder(data: data, folder: folder, name: name, tags: tags)
-                recents.remember(folder)
+            case .library: folder = nil
+            case .folder(let f): folder = f
             case .other:
-                guard let folder = pickFolder() else { return false } // cancelled: keep sheet open
-                try store.saveToFolder(data: data, folder: folder, name: name, tags: tags)
-                recents.remember(folder)
+                guard let picked = pickFolder() else { return false } // cancelled: keep sheet open
+                folder = picked
             }
+
+            for output in outputs {
+                if let folder {
+                    try store.saveToFolder(data: output.data, folder: folder, name: output.name, tags: tags)
+                } else {
+                    try store.saveToLibrary(
+                        data: output.data, name: output.name, tags: tags,
+                        captureMode: input.captureMode,
+                        outputMode: OutputMode.beautified.rawValue,
+                        sourceAppBundleID: input.sourceAppBundleID,
+                        capturedAt: input.capturedAt
+                    )
+                }
+            }
+            if let folder { recents.remember(folder) }
             onSaved?()
             return true
         } catch {
             NSLog("Lightscreen: beautified save failed — \(error.localizedDescription)")
             return false
         }
+    }
+
+    /// The finished image(s) as named PNGs: one when whole, several when split.
+    private func renderOutputs(named name: String) -> [(name: String, data: Data)] {
+        let style = draft.toStyle()
+        if splitCount > 1, let full = BeautifyRenderer.renderCGImage(original, style: style) {
+            let panels = Splitter.split(full, atFractions: splitFractions)
+            return panels.enumerated().compactMap { index, panel in
+                guard let data = NSBitmapImageRep(cgImage: panel).representation(using: .png, properties: [:]) else { return nil }
+                return (String(format: "%@_%02d", name, index + 1), data)
+            }
+        }
+        if let data = BeautifyRenderer.pngData(original, style: style) {
+            return [(name, data)]
+        }
+        return []
     }
 
     private func pickFolder() -> URL? {

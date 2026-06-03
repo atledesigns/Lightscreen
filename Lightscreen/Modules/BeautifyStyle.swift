@@ -1,8 +1,9 @@
 import SwiftUI
 
 /// Everything that turns a bare screenshot into a dressed-up image: the backdrop
-/// behind it, how much breathing room around it, its drop shadow, and how round
-/// its corners are. Pure data — the renderer reads this and paints accordingly.
+/// behind it, how much breathing room around it, its drop shadow, how round its
+/// corners are, any device chrome, and the output shape. Pure data — the
+/// renderer reads this and paints accordingly.
 struct BeautifyStyle: Equatable {
 
     /// What sits behind the screenshot.
@@ -30,6 +31,12 @@ struct BeautifyStyle: Equatable {
     var paddingPercent: Double   // 0–25, room around the image as % of its long side
     var shadow: Shadow
     var cornerRadius: Double     // 0–32, in points
+
+    // Stage 9 additions.
+    var deviceFrame: DeviceFrame
+    var keepOriginalChrome: Bool // when true, skip generic chrome and show as captured
+    var urlText: String          // faux URL for the browser frame
+    var aspectRatio: Double?     // output width ÷ height; nil = follow the image
 }
 
 /// The editable form of a style: every knob is a plain value so SwiftUI controls
@@ -60,6 +67,26 @@ struct BeautifyDraft: Equatable {
     var shadowOpacity: Double
     var cornerRadius: Double
 
+    // Stage 9 additions.
+    var deviceFrame: DeviceFrame
+    var keepOriginalChrome: Bool
+    var urlText: String
+    var ratioOption: AspectRatioOption
+    var customWidth: Double
+    var customHeight: Double
+
+    /// The output ratio implied by the current choice (nil = follow the image).
+    var resolvedAspectRatio: Double? {
+        switch ratioOption {
+        case .original:
+            return nil
+        case .custom:
+            return customHeight > 0 ? customWidth / customHeight : nil
+        default:
+            return ratioOption.fixedRatio
+        }
+    }
+
     func toStyle() -> BeautifyStyle {
         let background: BeautifyStyle.Background
         switch backgroundKind {
@@ -71,12 +98,17 @@ struct BeautifyDraft: Equatable {
             background: background,
             paddingPercent: paddingPercent,
             shadow: .init(enabled: shadowEnabled, blur: shadowBlur, yOffset: shadowY, opacity: shadowOpacity),
-            cornerRadius: cornerRadius
+            cornerRadius: cornerRadius,
+            deviceFrame: deviceFrame,
+            keepOriginalChrome: keepOriginalChrome,
+            urlText: urlText,
+            aspectRatio: resolvedAspectRatio
         )
     }
 
     /// The opening look for a freshly captured image: a gradient sampled from the
-    /// image itself, 10% padding, a soft shadow, and lightly rounded corners.
+    /// image itself, 10% padding, a soft shadow, lightly rounded corners, no
+    /// device frame, and a 16:9 output (overridden by the sticky ratio).
     static func makeDefault(from image: NSImage) -> BeautifyDraft {
         let colors = ColorSampler.dominantColors(image, count: 2)
         let c1 = colors.first ?? Color.blue
@@ -91,7 +123,13 @@ struct BeautifyDraft: Equatable {
             shadowBlur: 40,
             shadowY: 10,
             shadowOpacity: 0.2,
-            cornerRadius: 12
+            cornerRadius: 12,
+            deviceFrame: .none,
+            keepOriginalChrome: false,
+            urlText: "",
+            ratioOption: .r16x9,
+            customWidth: 1600,
+            customHeight: 900
         )
     }
 }

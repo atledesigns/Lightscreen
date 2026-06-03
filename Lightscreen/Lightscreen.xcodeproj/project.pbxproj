@@ -11,6 +11,7 @@
 		06D436DDEE3CADCAF058B3A6 /* PickerWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B373E10E3CE01A69742979F1 /* PickerWindowController.swift */; };
 		194E88FE18F1B19896931726 /* FloatingPreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C62603E80A8E5A830FA26AA3 /* FloatingPreviewController.swift */; };
 		1CCF1F2F27DC1474E9F7F9B7 /* PickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D186D68925A8B1A832900C54 /* PickerView.swift */; };
+		25097D7E57E60ABAD08AEC49 /* DeviceFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B47227BDBAC5AEA43DCC51D /* DeviceFrame.swift */; };
 		280A9232001542F8C3CF6BB1 /* RegionSelectorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E28F85FE0D09B672BF65CEE /* RegionSelectorController.swift */; };
 		2B1C570D79482AA950A34CBA /* ScreenCaptureKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C1BCDB0BE6AE1F90119DC1DA /* ScreenCaptureKit.framework */; };
 		4135E83152D7C581FC43EBD6 /* SavePopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11537568E2D2356D508B64A /* SavePopoverView.swift */; };
@@ -21,6 +22,8 @@
 		7368113A800DA7F22FBEF889 /* HotkeyListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12747AC88B4535376FBF01AD /* HotkeyListener.swift */; };
 		794380AE6FC884EA5DE841C0 /* Vibe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37566B46733DB92748A9EB0E /* Vibe.swift */; };
 		7B6AFA965098B581209DC077 /* ColorSampler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F80D747BA6C33500C600EFE /* ColorSampler.swift */; };
+		81FD86961D552A7BA8F723CE /* Splitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 046EEF985D7B646CAFCFE625 /* Splitter.swift */; };
+		94DD10F412A3DCC4CE1CA96E /* AspectRatio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CA630FAC1722BF20A5E5FD4 /* AspectRatio.swift */; };
 		9A8C4646C3E58C5FCC75F1D0 /* ThumbnailLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA8D4E2F97E873278305DCCF /* ThumbnailLoader.swift */; };
 		B6E43450CE86BF85CF03D54E /* EditorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A1759140D5794C1E49BD1A /* EditorWindowController.swift */; };
 		B7F550CEFA04EE0BCC5B987A /* BeautifyRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B0E33D43DCD70F28F2A164D /* BeautifyRenderer.swift */; };
@@ -40,11 +43,14 @@
 
 /* Begin PBXFileReference section */
 		03C05FF091A0D80783903801 /* .gitkeep */ = {isa = PBXFileReference; path = .gitkeep; sourceTree = "<group>"; };
+		046EEF985D7B646CAFCFE625 /* Splitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Splitter.swift; sourceTree = "<group>"; };
 		049D773CBFA3A25EC2EF6908 /* OutputMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutputMode.swift; sourceTree = "<group>"; };
+		0B47227BDBAC5AEA43DCC51D /* DeviceFrame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceFrame.swift; sourceTree = "<group>"; };
 		0FF642DC77E5FB12698277CC /* CaptureEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureEngine.swift; sourceTree = "<group>"; };
 		12747AC88B4535376FBF01AD /* HotkeyListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyListener.swift; sourceTree = "<group>"; };
 		13B37DC797B64D518D4CEF59 /* FloatingPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingPreviewView.swift; sourceTree = "<group>"; };
 		1B0E33D43DCD70F28F2A164D /* BeautifyRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeautifyRenderer.swift; sourceTree = "<group>"; };
+		1CA630FAC1722BF20A5E5FD4 /* AspectRatio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AspectRatio.swift; sourceTree = "<group>"; };
 		1CD2B96438FF45B09D8DACF8 /* Lightscreen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lightscreen.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		37566B46733DB92748A9EB0E /* Vibe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Vibe.swift; sourceTree = "<group>"; };
 		3F80D747BA6C33500C600EFE /* ColorSampler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorSampler.swift; sourceTree = "<group>"; };
@@ -99,16 +105,19 @@
 			isa = PBXGroup;
 			children = (
 				CEA101DF56B4E807DC8A4485 /* .gitkeep */,
+				1CA630FAC1722BF20A5E5FD4 /* AspectRatio.swift */,
 				1B0E33D43DCD70F28F2A164D /* BeautifyRenderer.swift */,
 				5AB25E9D9A261A07A8E0039D /* BeautifyStyle.swift */,
 				0FF642DC77E5FB12698277CC /* CaptureEngine.swift */,
 				A18F2CAC601BB7CFE0A35A72 /* CaptureMode.swift */,
 				3F80D747BA6C33500C600EFE /* ColorSampler.swift */,
+				0B47227BDBAC5AEA43DCC51D /* DeviceFrame.swift */,
 				12747AC88B4535376FBF01AD /* HotkeyListener.swift */,
 				C7CAD90E27D0B43BF186FF80 /* LibraryStore.swift */,
 				049D773CBFA3A25EC2EF6908 /* OutputMode.swift */,
 				5CAF354F164AB0D34E1FA533 /* PendingCapture.swift */,
 				B843CE21938740F1A50038C2 /* RecentDestinationsStore.swift */,
+				046EEF985D7B646CAFCFE625 /* Splitter.swift */,
 				DA8D4E2F97E873278305DCCF /* ThumbnailLoader.swift */,
 				37566B46733DB92748A9EB0E /* Vibe.swift */,
 				C8C5B89C36863067CE20BB1B /* WindowEnumerator.swift */,
@@ -235,11 +244,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				F999CA3AECB16FDBC62E2370 /* AppDelegate.swift in Sources */,
+				94DD10F412A3DCC4CE1CA96E /* AspectRatio.swift in Sources */,
 				B7F550CEFA04EE0BCC5B987A /* BeautifyRenderer.swift in Sources */,
 				D8218D8EB16C0A4E90B0C136 /* BeautifyStyle.swift in Sources */,
 				E9C1E07969D5BD8E244DD228 /* CaptureEngine.swift in Sources */,
 				53F851E7EF6B526E7AA3A676 /* CaptureMode.swift in Sources */,
 				7B6AFA965098B581209DC077 /* ColorSampler.swift in Sources */,
+				25097D7E57E60ABAD08AEC49 /* DeviceFrame.swift in Sources */,
 				EE3CCA24968243C00362D837 /* EditorView.swift in Sources */,
 				B6E43450CE86BF85CF03D54E /* EditorWindowController.swift in Sources */,
 				194E88FE18F1B19896931726 /* FloatingPreviewController.swift in Sources */,
@@ -257,6 +268,7 @@
 				BEA5C29709A06E513CD44A0F /* RecentDestinationsStore.swift in Sources */,
 				280A9232001542F8C3CF6BB1 /* RegionSelectorController.swift in Sources */,
 				4135E83152D7C581FC43EBD6 /* SavePopoverView.swift in Sources */,
+				81FD86961D552A7BA8F723CE /* Splitter.swift in Sources */,
 				9A8C4646C3E58C5FCC75F1D0 /* ThumbnailLoader.swift in Sources */,
 				794380AE6FC884EA5DE841C0 /* Vibe.swift in Sources */,
 				E1547ECAEC22687F1ACE71F8 /* WindowEnumerator.swift in Sources */,

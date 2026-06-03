@@ -192,19 +192,27 @@ struct EditorView: View {
 
             Group {
                 if let rendered = model.rendered {
-                    ZStack {
-                        // Behind a transparent backdrop, show a checkerboard so
-                        // see-through areas are obvious.
-                        if model.showsTransparencyCheckerboard {
-                            Checkerboard()
-                                .aspectRatio(rendered.size.width / rendered.size.height, contentMode: .fit)
+                    // Lock the frame to the image's exact aspect so cut lines land
+                    // on the real pixels, not the letterboxed area around them.
+                    Color.clear
+                        .aspectRatio(rendered.size.width / rendered.size.height, contentMode: .fit)
+                        .overlay {
+                            ZStack {
+                                if model.showsTransparencyCheckerboard {
+                                    Checkerboard()
+                                }
+                                Image(nsImage: rendered)
+                                    .resizable()
+                                if model.splitCount > 1 {
+                                    SplitOverlay(
+                                        fractions: model.splitFractions,
+                                        onMove: { index, value in model.updateFraction(index, to: value) }
+                                    )
+                                }
+                            }
                         }
-                        Image(nsImage: rendered)
-                            .resizable()
-                            .scaledToFit()
-                    }
-                    .shadow(color: .black.opacity(0.12), radius: 18, y: 8)
-                    .padding(32)
+                        .shadow(color: .black.opacity(0.12), radius: 18, y: 8)
+                        .padding(32)
                 } else {
                     ProgressView()
                 }
@@ -220,6 +228,8 @@ struct EditorView: View {
             VStack(alignment: .leading, spacing: 24) {
                 backgroundSection
                 imageSection
+                deviceFrameSection
+                ratioSection
             }
             .padding(20)
         }
@@ -263,6 +273,103 @@ struct EditorView: View {
             }
 
             slider("Corners", value: $model.draft.cornerRadius, range: 0...32, unit: "px")
+        }
+    }
+
+    private var deviceFrameSection: some View {
+        section("Device frame") {
+            Picker("", selection: $model.draft.deviceFrame) {
+                ForEach(DeviceFrame.allCases) { frame in
+                    Text(frame.label).tag(frame)
+                }
+            }
+            .labelsHidden()
+            .pickerStyle(.menu)
+
+            if model.draft.deviceFrame == .browser, !model.draft.keepOriginalChrome {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("URL")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    TextField("example.com", text: $model.draft.urlText)
+                        .textFieldStyle(.roundedBorder)
+                }
+            }
+
+            if model.draft.deviceFrame != .none {
+                Toggle("Keep original chrome", isOn: $model.draft.keepOriginalChrome)
+                    .toggleStyle(.switch)
+                    .font(.system(size: 13))
+            }
+        }
+    }
+
+    private var ratioSection: some View {
+        section("Ratio") {
+            Picker("", selection: $model.draft.ratioOption) {
+                ForEach(AspectRatioOption.allCases) { option in
+                    Text(option.rawValue).tag(option)
+                }
+            }
+            .labelsHidden()
+            .pickerStyle(.menu)
+            .onChange(of: model.draft.ratioOption) { model.persistRatio() }
+
+            Text(model.draft.ratioOption.hint)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
+            if model.draft.ratioOption == .custom {
+                HStack(spacing: 8) {
+                    numberField("W", value: $model.draft.customWidth)
+                    Text("×").foregroundStyle(.secondary)
+                    numberField("H", value: $model.draft.customHeight)
+                }
+            }
+
+            if model.canSplit {
+                splitControls
+            }
+        }
+        // A tall capture that no longer overflows the ratio shouldn't stay split.
+        .onChange(of: model.canSplit) { _, can in
+            if !can { model.clearSplit() }
+        }
+    }
+
+    private var splitControls: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Divider()
+            Text("Split into")
+                .font(.system(size: 13, weight: .medium))
+            HStack(spacing: 8) {
+                ForEach([2, 3, 4], id: \.self) { count in
+                    Button("\(count)") { model.setSplit(count) }
+                        .buttonStyle(.bordered)
+                        .tint(model.splitCount == count ? .accentColor : nil)
+                }
+                Stepper("", value: Binding(
+                    get: { model.splitCount },
+                    set: { model.setSplit($0) }
+                ), in: 2...8)
+                .labelsHidden()
+            }
+            if model.splitCount > 1 {
+                Text("\(model.splitCount) panels — drag the lines to adjust.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Button("Don't split") { model.clearSplit() }
+                    .buttonStyle(.link)
+            }
+        }
+    }
+
+    private func numberField(_ label: String, value: Binding<Double>) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(label).font(.caption2).foregroundStyle(.secondary)
+            TextField(label, value: value, format: .number)
+                .textFieldStyle(.roundedBorder)
+                .frame(width: 70)
         }
     }
 
@@ -340,6 +447,43 @@ private struct VibeThumbnail: View {
         }
         .opacity(isActive ? 1 : 0.7)
         .animation(.easeOut(duration: 0.15), value: isActive)
+    }
+}
+
+/// The draggable cut lines drawn over the canvas when a tall shot is split.
+/// Each line sits at its fraction down the image; drag it to move the cut.
+private struct SplitOverlay: View {
+    let fractions: [Double]
+    var onMove: (Int, Double) -> Void
+
+    var body: some View {
+        GeometryReader { geo in
+            ForEach(Array(fractions.enumerated()), id: \.offset) { index, fraction in
+                let y = geo.size.height * fraction
+                ZStack {
+                    // A white line with a dark hairline under it, readable on any backdrop.
+                    Rectangle().fill(.black.opacity(0.35)).frame(height: 3)
+                    Rectangle().fill(.white).frame(height: 1.5)
+                    // A grab handle in the centre.
+                    Capsule()
+                        .fill(.white)
+                        .frame(width: 34, height: 10)
+                        .overlay(Capsule().strokeBorder(.black.opacity(0.2)))
+                        .shadow(radius: 1)
+                }
+                .frame(width: geo.size.width, height: 22)
+                .contentShape(Rectangle())
+                .position(x: geo.size.width / 2, y: y)
+                .gesture(
+                    DragGesture(minimumDistance: 0, coordinateSpace: .named("splitArea"))
+                        .onChanged { value in
+                            let f = min(1, max(0, value.location.y / geo.size.height))
+                            onMove(index, f)
+                        }
+                )
+            }
+        }
+        .coordinateSpace(name: "splitArea")
     }
 }
 

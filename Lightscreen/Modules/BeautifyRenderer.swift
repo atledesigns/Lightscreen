@@ -10,52 +10,73 @@ enum BeautifyRenderer {
     /// The styled image as raw pixels. Returns nil only if the source can't be
     /// read at all.
     static func renderCGImage(_ image: NSImage, style: BeautifyStyle) -> CGImage? {
-        guard let source = image.bestCGImageForSampling() else { return nil }
+        guard let raw = image.bestCGImageForSampling() else { return nil }
 
-        let imgW = CGFloat(source.width)
-        let imgH = CGFloat(source.height)
-        guard imgW > 0, imgH > 0 else { return nil }
+        // 1. Generic device chrome, unless it's off or we're keeping the captured
+        //    chrome. This grows the picture before anything else measures it.
+        let chromeAdded = style.deviceFrame != .none && !style.keepOriginalChrome
+        let content = chromeAdded
+            ? (DeviceFrameRenderer.render(raw, frame: style.deviceFrame, urlText: style.urlText) ?? raw)
+            : raw
 
-        // Padding is a share of the long side, added on every edge — so as the
-        // slider climbs, the canvas grows and the screenshot reads as smaller
-        // inside a roomier frame.
-        let reference = max(imgW, imgH)
+        let contentW = CGFloat(content.width)
+        let contentH = CGFloat(content.height)
+        guard contentW > 0, contentH > 0 else { return nil }
+
+        // Padding is a share of the long side, added on every edge.
+        let reference = max(contentW, contentH)
         let pad = CGFloat(style.paddingPercent) / 100 * reference
-        let canvasW = (imgW + pad * 2).rounded()
-        let canvasH = (imgH + pad * 2).rounded()
+        let innerW = contentW + pad * 2
+        let innerH = contentH + pad * 2
 
-        // Pixels-per-point, so point-based knobs (corners, shadow) scale to match
-        // the capture's real resolution and look the same as they do on screen.
-        let scale = imgW / max(image.size.width, 1)
+        // 2. Canvas size. With a target ratio, grow whichever side is needed so
+        //    the padded content fits inside that shape; otherwise the canvas is
+        //    just the padded content (Original).
+        let canvasW: CGFloat, canvasH: CGFloat
+        if let ratio = style.aspectRatio, ratio > 0 {
+            if ratio >= innerW / innerH {
+                canvasH = innerH
+                canvasW = innerH * ratio
+            } else {
+                canvasW = innerW
+                canvasH = innerW / ratio
+            }
+        } else {
+            canvasW = innerW
+            canvasH = innerH
+        }
+        let cw = canvasW.rounded()
+        let ch = canvasH.rounded()
+
+        // Pixels-per-point, so point-based knobs (corners, shadow) scale with the
+        // capture's resolution and look the same as they do on screen.
+        let scale = contentW / max(image.size.width, 1)
 
         let space = CGColorSpaceCreateDeviceRGB()
         guard let ctx = CGContext(
-            data: nil, width: Int(canvasW), height: Int(canvasH),
+            data: nil, width: Int(cw), height: Int(ch),
             bitsPerComponent: 8, bytesPerRow: 0, space: space,
             bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
         ) else { return nil }
 
         ctx.interpolationQuality = .high
-        let canvas = CGRect(x: 0, y: 0, width: canvasW, height: canvasH)
+        let canvas = CGRect(x: 0, y: 0, width: cw, height: ch)
 
-        // 1. Backdrop.
+        // 3. Backdrop.
         drawBackground(style.background, in: canvas, ctx: ctx)
 
-        // 2. Where the screenshot sits, and how round its corners are.
-        let imageRect = CGRect(x: pad, y: pad, width: imgW, height: imgH)
-        let radius = min(CGFloat(style.cornerRadius) * scale, min(imgW, imgH) / 2)
+        // 4. The content, centred in the canvas. Skip extra corner rounding when
+        //    a device frame is on — the frame already shapes its own corners.
+        let contentRect = CGRect(x: (cw - contentW) / 2, y: (ch - contentH) / 2, width: contentW, height: contentH)
+        let radius = chromeAdded ? 0 : min(CGFloat(style.cornerRadius) * scale, min(contentW, contentH) / 2)
 
-        // 3. Build the screenshot clipped to its rounded corners on its own
-        //    transparent layer. This is the key to a clean shadow: window shots
-        //    already carry transparent corners and margins, so the shadow must be
-        //    cast from the image's *real* silhouette — never from an opaque card
-        //    behind it, which would otherwise show through as a white backdrop.
-        let content = roundedContent(source, width: imgW, height: imgH, radius: radius, space: space)
+        // Clip the content to rounded corners on its own transparent layer. This
+        // is the key to a clean shadow: window shots (and device frames) carry
+        // transparent corners, so the shadow must be cast from the real
+        // silhouette — never from an opaque card that would show through white.
+        let rounded = roundedContent(content, width: contentW, height: contentH, radius: radius, space: space)
 
-        // 4. Draw it in, with the soft shadow underneath. Setting the shadow on
-        //    this single draw makes Core Graphics trace it from the layer's alpha,
-        //    so it hugs the window's actual shape.
-        if let content {
+        if let rounded {
             ctx.saveGState()
             if style.shadow.enabled {
                 let shadowColor = CGColor(red: 0, green: 0, blue: 0, alpha: CGFloat(style.shadow.opacity))
@@ -66,7 +87,7 @@ enum BeautifyRenderer {
                     color: shadowColor
                 )
             }
-            ctx.draw(content, in: imageRect)
+            ctx.draw(rounded, in: contentRect)
             ctx.restoreGState()
         }
 
