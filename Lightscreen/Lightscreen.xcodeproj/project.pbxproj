@@ -7,18 +7,72 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		029072759FC214C89808F67F /* LibraryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7CAD90E27D0B43BF186FF80 /* LibraryStore.swift */; };
+		06D436DDEE3CADCAF058B3A6 /* PickerWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B373E10E3CE01A69742979F1 /* PickerWindowController.swift */; };
+		194E88FE18F1B19896931726 /* FloatingPreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C62603E80A8E5A830FA26AA3 /* FloatingPreviewController.swift */; };
+		1CCF1F2F27DC1474E9F7F9B7 /* PickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D186D68925A8B1A832900C54 /* PickerView.swift */; };
+		280A9232001542F8C3CF6BB1 /* RegionSelectorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E28F85FE0D09B672BF65CEE /* RegionSelectorController.swift */; };
+		2B1C570D79482AA950A34CBA /* ScreenCaptureKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C1BCDB0BE6AE1F90119DC1DA /* ScreenCaptureKit.framework */; };
+		4135E83152D7C581FC43EBD6 /* SavePopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11537568E2D2356D508B64A /* SavePopoverView.swift */; };
+		4FC57E4434819A08669EF4CC /* FloatingPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13B37DC797B64D518D4CEF59 /* FloatingPreviewView.swift */; };
+		53C25F794CB641B265D48F55 /* LibraryWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CDE407E7F30902D02D5E347 /* LibraryWindowController.swift */; };
+		53F851E7EF6B526E7AA3A676 /* CaptureMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = A18F2CAC601BB7CFE0A35A72 /* CaptureMode.swift */; };
+		58C1E373F030974B93C93FC8 /* PendingCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CAF354F164AB0D34E1FA533 /* PendingCapture.swift */; };
+		7368113A800DA7F22FBEF889 /* HotkeyListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12747AC88B4535376FBF01AD /* HotkeyListener.swift */; };
+		9A8C4646C3E58C5FCC75F1D0 /* ThumbnailLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA8D4E2F97E873278305DCCF /* ThumbnailLoader.swift */; };
+		BC14B1025E7F404179E370BF /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C3B50ED293AD51989C7DDBE /* libsqlite3.tbd */; };
+		BEA5C29709A06E513CD44A0F /* RecentDestinationsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B843CE21938740F1A50038C2 /* RecentDestinationsStore.swift */; };
+		CD11723BEF0842529F399369 /* WindowHighlighterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43D20D9FEC069A3305F26EB5 /* WindowHighlighterController.swift */; };
 		CED9A97A06DBB1E340749DF4 /* LightscreenApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D93AA5928EACA3C0CED0C80 /* LightscreenApp.swift */; };
+		D35020AE73EB4E7C12682667 /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF1DCFC20F1ECB6E13286F4 /* MenuBarView.swift */; };
+		D451BC80AF7F5A8FC4F6D8B9 /* OutputMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 049D773CBFA3A25EC2EF6908 /* OutputMode.swift */; };
+		E1547ECAEC22687F1ACE71F8 /* WindowEnumerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8C5B89C36863067CE20BB1B /* WindowEnumerator.swift */; };
+		E47AB6C0706283168E7A6ECF /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BE79F6EECCDF7868E21A71 /* LibraryView.swift */; };
+		E9C1E07969D5BD8E244DD228 /* CaptureEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FF642DC77E5FB12698277CC /* CaptureEngine.swift */; };
 		F999CA3AECB16FDBC62E2370 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB3B2BD6B780D45D0C81376 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		03C05FF091A0D80783903801 /* .gitkeep */ = {isa = PBXFileReference; path = .gitkeep; sourceTree = "<group>"; };
+		049D773CBFA3A25EC2EF6908 /* OutputMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutputMode.swift; sourceTree = "<group>"; };
+		0FF642DC77E5FB12698277CC /* CaptureEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureEngine.swift; sourceTree = "<group>"; };
+		12747AC88B4535376FBF01AD /* HotkeyListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyListener.swift; sourceTree = "<group>"; };
+		13B37DC797B64D518D4CEF59 /* FloatingPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingPreviewView.swift; sourceTree = "<group>"; };
 		1CD2B96438FF45B09D8DACF8 /* Lightscreen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lightscreen.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		43D20D9FEC069A3305F26EB5 /* WindowHighlighterController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowHighlighterController.swift; sourceTree = "<group>"; };
+		4DF1DCFC20F1ECB6E13286F4 /* MenuBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarView.swift; sourceTree = "<group>"; };
+		5CAF354F164AB0D34E1FA533 /* PendingCapture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingCapture.swift; sourceTree = "<group>"; };
+		5CDE407E7F30902D02D5E347 /* LibraryWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryWindowController.swift; sourceTree = "<group>"; };
 		5D93AA5928EACA3C0CED0C80 /* LightscreenApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightscreenApp.swift; sourceTree = "<group>"; };
 		724F5880F4CCB800B634C8C5 /* .gitkeep */ = {isa = PBXFileReference; path = .gitkeep; sourceTree = "<group>"; };
+		7C3B50ED293AD51989C7DDBE /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
+		88BE79F6EECCDF7868E21A71 /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
+		8E28F85FE0D09B672BF65CEE /* RegionSelectorController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionSelectorController.swift; sourceTree = "<group>"; };
+		A18F2CAC601BB7CFE0A35A72 /* CaptureMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureMode.swift; sourceTree = "<group>"; };
+		B373E10E3CE01A69742979F1 /* PickerWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerWindowController.swift; sourceTree = "<group>"; };
+		B843CE21938740F1A50038C2 /* RecentDestinationsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentDestinationsStore.swift; sourceTree = "<group>"; };
+		C1BCDB0BE6AE1F90119DC1DA /* ScreenCaptureKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ScreenCaptureKit.framework; path = System/Library/Frameworks/ScreenCaptureKit.framework; sourceTree = SDKROOT; };
+		C62603E80A8E5A830FA26AA3 /* FloatingPreviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingPreviewController.swift; sourceTree = "<group>"; };
+		C7CAD90E27D0B43BF186FF80 /* LibraryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryStore.swift; sourceTree = "<group>"; };
+		C8C5B89C36863067CE20BB1B /* WindowEnumerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowEnumerator.swift; sourceTree = "<group>"; };
 		CEA101DF56B4E807DC8A4485 /* .gitkeep */ = {isa = PBXFileReference; path = .gitkeep; sourceTree = "<group>"; };
+		D186D68925A8B1A832900C54 /* PickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerView.swift; sourceTree = "<group>"; };
+		DA8D4E2F97E873278305DCCF /* ThumbnailLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailLoader.swift; sourceTree = "<group>"; };
 		DDB3B2BD6B780D45D0C81376 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		E11537568E2D2356D508B64A /* SavePopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavePopoverView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A60E79984582460BCD84053E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BC14B1025E7F404179E370BF /* libsqlite3.tbd in Frameworks */,
+				2B1C570D79482AA950A34CBA /* ScreenCaptureKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		06B342CE085294D41CC805BD /* Products */ = {
@@ -33,6 +87,15 @@
 			isa = PBXGroup;
 			children = (
 				CEA101DF56B4E807DC8A4485 /* .gitkeep */,
+				0FF642DC77E5FB12698277CC /* CaptureEngine.swift */,
+				A18F2CAC601BB7CFE0A35A72 /* CaptureMode.swift */,
+				12747AC88B4535376FBF01AD /* HotkeyListener.swift */,
+				C7CAD90E27D0B43BF186FF80 /* LibraryStore.swift */,
+				049D773CBFA3A25EC2EF6908 /* OutputMode.swift */,
+				5CAF354F164AB0D34E1FA533 /* PendingCapture.swift */,
+				B843CE21938740F1A50038C2 /* RecentDestinationsStore.swift */,
+				DA8D4E2F97E873278305DCCF /* ThumbnailLoader.swift */,
+				C8C5B89C36863067CE20BB1B /* WindowEnumerator.swift */,
 			);
 			path = Modules;
 			sourceTree = "<group>";
@@ -49,7 +112,12 @@
 			isa = PBXGroup;
 			children = (
 				DDB3B2BD6B780D45D0C81376 /* AppDelegate.swift */,
+				C62603E80A8E5A830FA26AA3 /* FloatingPreviewController.swift */,
+				5CDE407E7F30902D02D5E347 /* LibraryWindowController.swift */,
 				5D93AA5928EACA3C0CED0C80 /* LightscreenApp.swift */,
+				B373E10E3CE01A69742979F1 /* PickerWindowController.swift */,
+				8E28F85FE0D09B672BF65CEE /* RegionSelectorController.swift */,
+				43D20D9FEC069A3305F26EB5 /* WindowHighlighterController.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -58,6 +126,11 @@
 			isa = PBXGroup;
 			children = (
 				03C05FF091A0D80783903801 /* .gitkeep */,
+				13B37DC797B64D518D4CEF59 /* FloatingPreviewView.swift */,
+				88BE79F6EECCDF7868E21A71 /* LibraryView.swift */,
+				4DF1DCFC20F1ECB6E13286F4 /* MenuBarView.swift */,
+				D186D68925A8B1A832900C54 /* PickerView.swift */,
+				E11537568E2D2356D508B64A /* SavePopoverView.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -69,8 +142,18 @@
 				163389436D1B6930AFE5FF17 /* Modules */,
 				253A8E3C5DE6343CAECDAB4B /* Resources */,
 				C3CD9A23BF8CD74E7BC85E46 /* UI */,
+				FE1A9064D8E0160EFAF3F552 /* Frameworks */,
 				06B342CE085294D41CC805BD /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		FE1A9064D8E0160EFAF3F552 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				7C3B50ED293AD51989C7DDBE /* libsqlite3.tbd */,
+				C1BCDB0BE6AE1F90119DC1DA /* ScreenCaptureKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -81,6 +164,7 @@
 			buildConfigurationList = 67F6275E0ADCCAF601742EE1 /* Build configuration list for PBXNativeTarget "Lightscreen" */;
 			buildPhases = (
 				0592C1D438A53C35B6741F38 /* Sources */,
+				A60E79984582460BCD84053E /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -102,6 +186,10 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
+					19109BBFCC0E50EA7C92B446 = {
+						DevelopmentTeam = QP5KS39D9K;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = 1938448BBA090884F3BD65A9 /* Build configuration list for PBXProject "Lightscreen" */;
@@ -129,7 +217,26 @@
 			buildActionMask = 2147483647;
 			files = (
 				F999CA3AECB16FDBC62E2370 /* AppDelegate.swift in Sources */,
+				E9C1E07969D5BD8E244DD228 /* CaptureEngine.swift in Sources */,
+				53F851E7EF6B526E7AA3A676 /* CaptureMode.swift in Sources */,
+				194E88FE18F1B19896931726 /* FloatingPreviewController.swift in Sources */,
+				4FC57E4434819A08669EF4CC /* FloatingPreviewView.swift in Sources */,
+				7368113A800DA7F22FBEF889 /* HotkeyListener.swift in Sources */,
+				029072759FC214C89808F67F /* LibraryStore.swift in Sources */,
+				E47AB6C0706283168E7A6ECF /* LibraryView.swift in Sources */,
+				53C25F794CB641B265D48F55 /* LibraryWindowController.swift in Sources */,
 				CED9A97A06DBB1E340749DF4 /* LightscreenApp.swift in Sources */,
+				D35020AE73EB4E7C12682667 /* MenuBarView.swift in Sources */,
+				D451BC80AF7F5A8FC4F6D8B9 /* OutputMode.swift in Sources */,
+				58C1E373F030974B93C93FC8 /* PendingCapture.swift in Sources */,
+				1CCF1F2F27DC1474E9F7F9B7 /* PickerView.swift in Sources */,
+				06D436DDEE3CADCAF058B3A6 /* PickerWindowController.swift in Sources */,
+				BEA5C29709A06E513CD44A0F /* RecentDestinationsStore.swift in Sources */,
+				280A9232001542F8C3CF6BB1 /* RegionSelectorController.swift in Sources */,
+				4135E83152D7C581FC43EBD6 /* SavePopoverView.swift in Sources */,
+				9A8C4646C3E58C5FCC75F1D0 /* ThumbnailLoader.swift in Sources */,
+				E1547ECAEC22687F1ACE71F8 /* WindowEnumerator.swift in Sources */,
+				CD11723BEF0842529F399369 /* WindowHighlighterController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -169,8 +276,10 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = QP5KS39D9K;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -255,8 +364,10 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = QP5KS39D9K;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;

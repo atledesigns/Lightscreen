@@ -10,6 +10,7 @@ build/
 !*.xcworkspace/xcshareddata
 *.xcuserstate
 *.xcuserdata
+xcuserdata/
 *.xccheckout
 
 # User interface files

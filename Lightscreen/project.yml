@@ -4,6 +4,14 @@ options:
   deploymentTarget:
     macOS: "26.0"
 
+settings:
+  base:
+    # Stable signature from your free Personal Team, so macOS remembers the
+    # Screen Recording grant across rebuilds instead of treating each build
+    # as a brand-new app.
+    DEVELOPMENT_TEAM: QP5KS39D9K
+    CODE_SIGN_STYLE: Automatic
+
 targets:
   Lightscreen:
     type: application
@@ -13,6 +21,9 @@ targets:
       - Modules
       - UI
       - Resources
+    dependencies:
+      - sdk: libsqlite3.tbd
+      - sdk: ScreenCaptureKit.framework
     info:
       path: Info.plist
       properties:
