@@ -22,6 +22,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     // Stage 6: hover-a-window-to-capture overlay.
     private let windowHighlighter = WindowHighlighterController()
 
+    // Stage 10: full-page (scrolling) capture — auto-scroll + stitch.
+    private lazy var scrollCapture: ScrollCaptureController = {
+        let controller = ScrollCaptureController(engine: captureEngine)
+        controller.onResult = { [weak self] pending in self?.route(pending) }
+        return controller
+    }()
+
     // Stage 3: post-capture floating preview (drag out / click to save / ignore).
     private let recents = RecentDestinationsStore()
     private lazy var preview = FloatingPreviewController(library: library, recents: recents)
@@ -101,7 +108,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 Task { await self.captureWindowAndShow(window) }
             }
         case .fullPage:
-            NSLog("Lightscreen: \(mode.label) capture arrives in a later stage.")
+            // Scroll-and-stitch the window that was in front before ⌘⇧7 fired.
+            scrollCapture.begin(sourceAppBundleID: sourceAppBundleID, outputMode: outputMode.mode)
         }
     }
 

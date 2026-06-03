@@ -73,6 +73,16 @@ struct CaptureEngine {
     /// the soft macOS drop shadow, nothing behind it. `windowID` is the same id
     /// the highlighter overlay reports for the window under the cursor.
     func captureWindow(windowID: CGWindowID) async throws -> Data {
+        let image = try await captureWindowCGImage(windowID: windowID)
+        return try pngData(from: image)
+    }
+
+    /// Same grab as `captureWindow`, but hands back the raw CGImage. Scrolling
+    /// capture takes dozens of these in a row and stitches them, so re-encoding
+    /// each to PNG just to decode it again would be wasteful. Note: for the tidy
+    /// frame-to-frame comparison we drop the soft drop shadow here, so the
+    /// window edges line up pixel-for-pixel across frames.
+    func captureWindowCGImage(windowID: CGWindowID) async throws -> CGImage {
         let content = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
         guard let window = content.windows.first(where: { $0.windowID == windowID }) else {
             throw CaptureError.noDisplay
@@ -82,17 +92,15 @@ struct CaptureEngine {
         let filter = SCContentFilter(desktopIndependentWindow: window)
 
         // Let the filter tell us the true size (it already accounts for the
-        // shadow margin and the display's pixel density), so the shot is sharp
-        // on Retina and the shadow isn't clipped.
+        // display's pixel density), so the shot is sharp on Retina.
         let config = SCStreamConfiguration()
         config.width = Int((filter.contentRect.width * CGFloat(filter.pointPixelScale)).rounded())
         config.height = Int((filter.contentRect.height * CGFloat(filter.pointPixelScale)).rounded())
         config.showsCursor = false
-        config.ignoreShadowsSingleWindow = false // keep the shadow
+        config.ignoreShadowsSingleWindow = true // drop the shadow so frames align cleanly
         config.scalesToFit = true
 
-        let image = try await SCScreenshotManager.captureImage(contentFilter: filter, configuration: config)
-        return try pngData(from: image)
+        return try await SCScreenshotManager.captureImage(contentFilter: filter, configuration: config)
     }
 
     private func pngData(from cgImage: CGImage) throws -> Data {

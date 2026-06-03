@@ -7,6 +7,11 @@ enum CaptureMode: String, CaseIterable {
     case window
     case fullPage
 
+    /// The modes we actually offer in the picker and menu right now. Full Page
+    /// (scroll-and-stitch) is built but still being tuned, so it's held back —
+    /// drop `.fullPage` back in here to light it up again.
+    static var offered: [CaptureMode] { [.region, .window] }
+
     /// Human-friendly name used in the picker and in console logs for now.
     var label: String {
         switch self {

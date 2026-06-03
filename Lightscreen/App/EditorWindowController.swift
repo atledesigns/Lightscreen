@@ -65,6 +65,11 @@ final class EditorModel: ObservableObject {
            let option = AspectRatioOption(rawValue: saved) {
             draft.ratioOption = option
         }
+        // A tall full-page catch shouldn't get squeezed into a 16:9 or square —
+        // it always opens at its own shape so nothing's cropped off.
+        if input.captureMode == CaptureMode.fullPage.rawValue {
+            draft.ratioOption = .original
+        }
         self.draft = draft
         rerender()
     }

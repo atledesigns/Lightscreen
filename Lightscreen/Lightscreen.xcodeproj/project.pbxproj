@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		00D4FF4F42A0CD1FF7B1C8EF /* ScrollCaptureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90EE4E00D4FB2BCEAE39A699 /* ScrollCaptureController.swift */; };
 		029072759FC214C89808F67F /* LibraryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7CAD90E27D0B43BF186FF80 /* LibraryStore.swift */; };
 		06D436DDEE3CADCAF058B3A6 /* PickerWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B373E10E3CE01A69742979F1 /* PickerWindowController.swift */; };
 		194E88FE18F1B19896931726 /* FloatingPreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C62603E80A8E5A830FA26AA3 /* FloatingPreviewController.swift */; };
@@ -25,6 +26,8 @@
 		81FD86961D552A7BA8F723CE /* Splitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 046EEF985D7B646CAFCFE625 /* Splitter.swift */; };
 		94DD10F412A3DCC4CE1CA96E /* AspectRatio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CA630FAC1722BF20A5E5FD4 /* AspectRatio.swift */; };
 		9A8C4646C3E58C5FCC75F1D0 /* ThumbnailLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA8D4E2F97E873278305DCCF /* ThumbnailLoader.swift */; };
+		9C53CC05BC8EF121ABD452E0 /* AutoScrollDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 984BB9EF640943D8489D0DC8 /* AutoScrollDriver.swift */; };
+		B38AB663D83EC77B7FCF187C /* ImageStitcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED0D9092CB2EDA2574632AA2 /* ImageStitcher.swift */; };
 		B6E43450CE86BF85CF03D54E /* EditorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A1759140D5794C1E49BD1A /* EditorWindowController.swift */; };
 		B7F550CEFA04EE0BCC5B987A /* BeautifyRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B0E33D43DCD70F28F2A164D /* BeautifyRenderer.swift */; };
 		BC14B1025E7F404179E370BF /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C3B50ED293AD51989C7DDBE /* libsqlite3.tbd */; };
@@ -38,6 +41,7 @@
 		E47AB6C0706283168E7A6ECF /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BE79F6EECCDF7868E21A71 /* LibraryView.swift */; };
 		E9C1E07969D5BD8E244DD228 /* CaptureEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FF642DC77E5FB12698277CC /* CaptureEngine.swift */; };
 		EE3CCA24968243C00362D837 /* EditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F4D010C3F042514A6508B3 /* EditorView.swift */; };
+		EEFA608DA882F5B5B033C1BF /* ScrollCaptureViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27BA60881E865BE782C681D4 /* ScrollCaptureViews.swift */; };
 		F999CA3AECB16FDBC62E2370 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDB3B2BD6B780D45D0C81376 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
@@ -52,6 +56,7 @@
 		1B0E33D43DCD70F28F2A164D /* BeautifyRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeautifyRenderer.swift; sourceTree = "<group>"; };
 		1CA630FAC1722BF20A5E5FD4 /* AspectRatio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AspectRatio.swift; sourceTree = "<group>"; };
 		1CD2B96438FF45B09D8DACF8 /* Lightscreen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lightscreen.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		27BA60881E865BE782C681D4 /* ScrollCaptureViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollCaptureViews.swift; sourceTree = "<group>"; };
 		37566B46733DB92748A9EB0E /* Vibe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Vibe.swift; sourceTree = "<group>"; };
 		3F80D747BA6C33500C600EFE /* ColorSampler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorSampler.swift; sourceTree = "<group>"; };
 		43D20D9FEC069A3305F26EB5 /* WindowHighlighterController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowHighlighterController.swift; sourceTree = "<group>"; };
@@ -64,6 +69,8 @@
 		7C3B50ED293AD51989C7DDBE /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		88BE79F6EECCDF7868E21A71 /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
 		8E28F85FE0D09B672BF65CEE /* RegionSelectorController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionSelectorController.swift; sourceTree = "<group>"; };
+		90EE4E00D4FB2BCEAE39A699 /* ScrollCaptureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollCaptureController.swift; sourceTree = "<group>"; };
+		984BB9EF640943D8489D0DC8 /* AutoScrollDriver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoScrollDriver.swift; sourceTree = "<group>"; };
 		A18F2CAC601BB7CFE0A35A72 /* CaptureMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureMode.swift; sourceTree = "<group>"; };
 		B373E10E3CE01A69742979F1 /* PickerWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerWindowController.swift; sourceTree = "<group>"; };
 		B843CE21938740F1A50038C2 /* RecentDestinationsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentDestinationsStore.swift; sourceTree = "<group>"; };
@@ -78,6 +85,7 @@
 		DA8D4E2F97E873278305DCCF /* ThumbnailLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailLoader.swift; sourceTree = "<group>"; };
 		DDB3B2BD6B780D45D0C81376 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E11537568E2D2356D508B64A /* SavePopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavePopoverView.swift; sourceTree = "<group>"; };
+		ED0D9092CB2EDA2574632AA2 /* ImageStitcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageStitcher.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +114,7 @@
 			children = (
 				CEA101DF56B4E807DC8A4485 /* .gitkeep */,
 				1CA630FAC1722BF20A5E5FD4 /* AspectRatio.swift */,
+				984BB9EF640943D8489D0DC8 /* AutoScrollDriver.swift */,
 				1B0E33D43DCD70F28F2A164D /* BeautifyRenderer.swift */,
 				5AB25E9D9A261A07A8E0039D /* BeautifyStyle.swift */,
 				0FF642DC77E5FB12698277CC /* CaptureEngine.swift */,
@@ -113,6 +122,7 @@
 				3F80D747BA6C33500C600EFE /* ColorSampler.swift */,
 				0B47227BDBAC5AEA43DCC51D /* DeviceFrame.swift */,
 				12747AC88B4535376FBF01AD /* HotkeyListener.swift */,
+				ED0D9092CB2EDA2574632AA2 /* ImageStitcher.swift */,
 				C7CAD90E27D0B43BF186FF80 /* LibraryStore.swift */,
 				049D773CBFA3A25EC2EF6908 /* OutputMode.swift */,
 				5CAF354F164AB0D34E1FA533 /* PendingCapture.swift */,
@@ -143,6 +153,7 @@
 				5D93AA5928EACA3C0CED0C80 /* LightscreenApp.swift */,
 				B373E10E3CE01A69742979F1 /* PickerWindowController.swift */,
 				8E28F85FE0D09B672BF65CEE /* RegionSelectorController.swift */,
+				90EE4E00D4FB2BCEAE39A699 /* ScrollCaptureController.swift */,
 				43D20D9FEC069A3305F26EB5 /* WindowHighlighterController.swift */,
 			);
 			path = App;
@@ -158,6 +169,7 @@
 				4DF1DCFC20F1ECB6E13286F4 /* MenuBarView.swift */,
 				D186D68925A8B1A832900C54 /* PickerView.swift */,
 				E11537568E2D2356D508B64A /* SavePopoverView.swift */,
+				27BA60881E865BE782C681D4 /* ScrollCaptureViews.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -245,6 +257,7 @@
 			files = (
 				F999CA3AECB16FDBC62E2370 /* AppDelegate.swift in Sources */,
 				94DD10F412A3DCC4CE1CA96E /* AspectRatio.swift in Sources */,
+				9C53CC05BC8EF121ABD452E0 /* AutoScrollDriver.swift in Sources */,
 				B7F550CEFA04EE0BCC5B987A /* BeautifyRenderer.swift in Sources */,
 				D8218D8EB16C0A4E90B0C136 /* BeautifyStyle.swift in Sources */,
 				E9C1E07969D5BD8E244DD228 /* CaptureEngine.swift in Sources */,
@@ -256,6 +269,7 @@
 				194E88FE18F1B19896931726 /* FloatingPreviewController.swift in Sources */,
 				4FC57E4434819A08669EF4CC /* FloatingPreviewView.swift in Sources */,
 				7368113A800DA7F22FBEF889 /* HotkeyListener.swift in Sources */,
+				B38AB663D83EC77B7FCF187C /* ImageStitcher.swift in Sources */,
 				029072759FC214C89808F67F /* LibraryStore.swift in Sources */,
 				E47AB6C0706283168E7A6ECF /* LibraryView.swift in Sources */,
 				53C25F794CB641B265D48F55 /* LibraryWindowController.swift in Sources */,
@@ -268,6 +282,8 @@
 				BEA5C29709A06E513CD44A0F /* RecentDestinationsStore.swift in Sources */,
 				280A9232001542F8C3CF6BB1 /* RegionSelectorController.swift in Sources */,
 				4135E83152D7C581FC43EBD6 /* SavePopoverView.swift in Sources */,
+				00D4FF4F42A0CD1FF7B1C8EF /* ScrollCaptureController.swift in Sources */,
+				EEFA608DA882F5B5B033C1BF /* ScrollCaptureViews.swift in Sources */,
 				81FD86961D552A7BA8F723CE /* Splitter.swift in Sources */,
 				9A8C4646C3E58C5FCC75F1D0 /* ThumbnailLoader.swift in Sources */,
 				794380AE6FC884EA5DE841C0 /* Vibe.swift in Sources */,

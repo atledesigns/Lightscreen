@@ -37,7 +37,7 @@ struct PickerView: View {
         VStack(spacing: 22) {
             GlassEffectContainer(spacing: 16) {
                 HStack(spacing: 16) {
-                    ForEach(CaptureMode.allCases, id: \.self) { mode in
+                    ForEach(CaptureMode.offered, id: \.self) { mode in
                         captureButton(mode)
                     }
                 }

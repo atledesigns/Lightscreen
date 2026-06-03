@@ -13,7 +13,7 @@ struct MenuBarView: View {
         VStack(spacing: 12) {
             GlassEffectContainer(spacing: 10) {
                 HStack(spacing: 10) {
-                    ForEach(CaptureMode.allCases, id: \.self) { mode in
+                    ForEach(CaptureMode.offered, id: \.self) { mode in
                         captureButton(mode)
                     }
                 }
