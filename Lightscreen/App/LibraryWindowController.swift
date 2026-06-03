@@ -30,6 +30,10 @@ final class LibraryModel: ObservableObject {
     let store: LibraryStore
     let thumbnails = ThumbnailCache()
 
+    /// Set by the app to open a past shot in the Beautify editor. Until wired,
+    /// the action stays a friendly no-op.
+    var onOpenEditor: ((Capture) -> Void)?
+
     init(store: LibraryStore) {
         self.store = store
     }
@@ -126,9 +130,13 @@ final class LibraryModel: ObservableObject {
         }
     }
 
-    /// Opening in the editor arrives in Stage 7; for now it's a friendly no-op.
+    /// Open a past shot in the Beautify editor (double-click / "Open in editor").
     func openInEditor(_ capture: Capture) {
-        NSLog("Lightscreen: in-app editor arrives in a later stage.")
+        if let onOpenEditor {
+            onOpenEditor(capture)
+        } else {
+            NSLog("Lightscreen: editor handler not wired.")
+        }
     }
 }
 
@@ -139,8 +147,18 @@ final class LibraryWindowController: NSObject, NSWindowDelegate {
     private let model: LibraryModel
     private var window: NSWindow?
 
+    /// Set by the app to route "Open in editor" / double-click to the editor.
+    var onOpenEditor: ((Capture) -> Void)? {
+        didSet { model.onOpenEditor = onOpenEditor }
+    }
+
     init(store: LibraryStore) {
         self.model = LibraryModel(store: store)
+    }
+
+    /// Re-read the library (e.g. after the editor saved a new shot).
+    func refresh() {
+        model.reload()
     }
 
     func show() {

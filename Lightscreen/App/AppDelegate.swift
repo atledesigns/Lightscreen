@@ -29,6 +29,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     // Stage 5: the real Library window (date-grouped grid of every shot).
     private lazy var libraryWindow = LibraryWindowController(store: library)
 
+    // Stage 7: the Beautify editor (gradient backdrop, padding, shadow, corners).
+    private lazy var editor: EditorWindowController = {
+        let controller = EditorWindowController(store: library, recents: recents)
+        controller.onLibraryChanged = { [weak self] in self?.libraryWindow.refresh() }
+        return controller
+    }()
+
     // Whatever app was frontmost the instant ⌘⇧7 fired — recorded before we
     // steal focus, so we can credit the right source app on the saved shot.
     private var sourceAppBundleID: String?
@@ -45,6 +52,35 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         hotkey.start()
 
         picker.onCapture = { [weak self] mode in self?.handleCapture(mode) }
+
+        // Double-click / "Open in editor" in the library opens the Beautify editor.
+        libraryWindow.onOpenEditor = { [weak self] capture in self?.openInEditor(capture) }
+    }
+
+    /// Sends a fresh capture either to the editor (Beautified) or the floating
+    /// preview (Raw). One door, so every capture mode behaves the same.
+    private func route(_ pending: PendingCapture) {
+        if pending.outputMode == .beautified {
+            editor.open(from: pending)
+        } else {
+            preview.present(pending)
+        }
+    }
+
+    /// Opens a previously saved shot in the editor with default beautification.
+    private func openInEditor(_ capture: Capture) {
+        let url = library.fileURL(for: capture)
+        guard let image = NSImage(contentsOf: url) else {
+            NSLog("Lightscreen: could not load \(url.lastPathComponent) for editing")
+            return
+        }
+        editor.open(EditorInput(
+            image: image,
+            suggestedName: (capture.filename as NSString).deletingPathExtension,
+            captureMode: capture.captureMode,
+            sourceAppBundleID: capture.sourceAppBundleID,
+            capturedAt: capture.capturedAt
+        ))
     }
 
     /// Routes a chosen capture mode. Region is live in Stage 2; the others land
@@ -90,7 +126,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 suggestedName: suggested,
                 tempURL: tempURL
             )
-            preview.present(pending)
+            route(pending)
         } catch {
             NSLog("Lightscreen: window capture failed — \(error.localizedDescription)")
         }
@@ -118,9 +154,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 suggestedName: suggested,
                 tempURL: tempURL
             )
-            // Hand it to the floating preview: ignore = auto-save, drag = ship it,
-            // click = save with options.
-            preview.present(pending)
+            // Beautified opens the editor; Raw drops into the floating preview
+            // (ignore = auto-save, drag = ship it, click = save with options).
+            route(pending)
         } catch {
             NSLog("Lightscreen: capture failed — \(error.localizedDescription)")
         }
