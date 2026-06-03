@@ -6,6 +6,8 @@ import SwiftUI
 /// playful, Pokémon-coded personality.
 struct FloatingPreviewView: View {
     let image: NSImage
+    /// Whether the shimmer + star flourish plays — driven by the Settings toggle.
+    var sparkleEnabled: Bool = true
     var onTap: () -> Void
     var makeProvider: () -> NSItemProvider
     var onDragStart: () -> Void
@@ -15,10 +17,7 @@ struct FloatingPreviewView: View {
     @State private var shimmerX: CGFloat = -1.2
     @State private var sparkle = false
 
-    private var particlesOn: Bool {
-        // Defaults to on; Settings (a later stage) will flip this.
-        UserDefaults.standard.object(forKey: "particles_on_capture") as? Bool ?? true
-    }
+    private var particlesOn: Bool { sparkleEnabled }
 
     var body: some View {
         thumbnail

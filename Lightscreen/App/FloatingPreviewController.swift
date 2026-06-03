@@ -8,6 +8,7 @@ import SwiftUI
 final class FloatingPreviewController: NSObject, NSPopoverDelegate {
     private let library: LibraryStore
     private let recents: RecentDestinationsStore
+    private let settings: SettingsStore
 
     private var window: NSWindow?
     private var popover: NSPopover?
@@ -21,9 +22,17 @@ final class FloatingPreviewController: NSObject, NSPopoverDelegate {
     /// space for the shadow and gives the popover a card edge to point at.
     private let margin: CGFloat = 24
 
-    init(library: LibraryStore, recents: RecentDestinationsStore) {
+    init(library: LibraryStore, recents: RecentDestinationsStore, settings: SettingsStore) {
         self.library = library
         self.recents = recents
+        self.settings = settings
+    }
+
+    /// Pinned folders first (from Settings), then recent ones — de-duped — for
+    /// the save sheet's Where dropdown.
+    private var whereFolders: [URL] {
+        var seen = Set<String>()
+        return (settings.pinnedFolders + recents.recents()).filter { seen.insert($0.path).inserted }
     }
 
     // MARK: - Showing a capture
@@ -59,6 +68,7 @@ final class FloatingPreviewController: NSObject, NSPopoverDelegate {
 
         let root = FloatingPreviewView(
             image: pending.image,
+            sparkleEnabled: settings.sparkle,
             onTap: { [weak self] in self?.showSavePopover() },
             makeProvider: { [weak self] in self?.makeProvider() ?? NSItemProvider() },
             onDragStart: { [weak self] in self?.draggedOut() },
@@ -118,7 +128,7 @@ final class FloatingPreviewController: NSObject, NSPopoverDelegate {
         pop.delegate = self
         let view = SavePopoverView(
             initialName: (p.suggestedName as NSString).deletingPathExtension,
-            recents: recents.recents(),
+            recents: whereFolders,
             onSave: { [weak self] name, tags, choice in self?.commitSave(name: name, tags: tags, choice: choice) },
             onCancel: { [weak self] in self?.popover?.performClose(nil) }
         )

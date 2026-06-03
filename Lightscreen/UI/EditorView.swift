@@ -7,6 +7,8 @@ struct EditorView: View {
     @ObservedObject var model: EditorModel
     @ObservedObject var vibes: VibeStore
     @State private var showingSave = false
+    /// Drives the save-button bloom + filename shimmer on a successful save.
+    @State private var delighting = false
 
     // The "name this vibe" flow. `nameDialogTarget` is nil when creating a new
     // vibe, or a custom vibe's id when renaming one.
@@ -50,6 +52,7 @@ struct EditorView: View {
                 .textFieldStyle(.plain)
                 .font(.system(size: 14, weight: .medium))
                 .frame(maxWidth: 320)
+                .overlay(filenameShimmer)
 
             Spacer()
 
@@ -62,16 +65,13 @@ struct EditorView: View {
             }
             .buttonStyle(.borderedProminent)
             .keyboardShortcut("s", modifiers: .command)
+            .overlay(saveGlow)
             .popover(isPresented: $showingSave, arrowEdge: .bottom) {
                 SavePopoverView(
                     initialName: model.name,
                     recents: model.recents.recents(),
                     onSave: { name, tags, choice in
-                        // On success the window closes itself; on a cancelled
-                        // folder pick we keep the sheet open to try again.
-                        if model.commit(name: name, tags: tags, choice: choice) {
-                            showingSave = false
-                        }
+                        save(name: name, tags: tags, choice: choice)
                     },
                     onCancel: { showingSave = false }
                 )
@@ -79,6 +79,46 @@ struct EditorView: View {
         }
         .padding(.horizontal, 16)
         .frame(height: 52)
+    }
+
+    /// Commit the save, with a brief bloom + shimmer first when the delight is on
+    /// (the window closes on success, so we let the flourish play, then save).
+    private func save(name: String, tags: [String], choice: SaveChoice) {
+        guard model.saveDelightEnabled else {
+            if model.commit(name: name, tags: tags, choice: choice) { showingSave = false }
+            return
+        }
+        showingSave = false
+        withAnimation(.easeOut(duration: 0.45)) { delighting = true }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+            // If a folder pick is cancelled the editor simply stays open.
+            _ = model.commit(name: name, tags: tags, choice: choice)
+            delighting = false
+        }
+    }
+
+    /// A soft radial bloom in the accent colour over the Save button.
+    @ViewBuilder private var saveGlow: some View {
+        if delighting {
+            RoundedRectangle(cornerRadius: 7)
+                .fill(.tint)
+                .blur(radius: 12)
+                .opacity(0.7)
+                .scaleEffect(1.6)
+                .allowsHitTesting(false)
+                .transition(.opacity)
+        }
+    }
+
+    /// A single light sweep across the filename when a save lands.
+    @ViewBuilder private var filenameShimmer: some View {
+        if delighting {
+            LinearGradient(colors: [.clear, .white.opacity(0.7), .clear],
+                           startPoint: .leading, endPoint: .trailing)
+                .blendMode(.screen)
+                .allowsHitTesting(false)
+                .transition(.opacity)
+        }
     }
 
     // MARK: - Vibe strip

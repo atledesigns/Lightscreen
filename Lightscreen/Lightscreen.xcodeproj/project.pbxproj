@@ -20,6 +20,8 @@
 		53C25F794CB641B265D48F55 /* LibraryWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CDE407E7F30902D02D5E347 /* LibraryWindowController.swift */; };
 		53F851E7EF6B526E7AA3A676 /* CaptureMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = A18F2CAC601BB7CFE0A35A72 /* CaptureMode.swift */; };
 		58C1E373F030974B93C93FC8 /* PendingCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CAF354F164AB0D34E1FA533 /* PendingCapture.swift */; };
+		5D10EFAB1423A20750F95CE4 /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EBD30E79A283FC42DD2A468 /* SettingsWindowController.swift */; };
+		5DACC37ABCC79536D1240894 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12F42B9B847D235EE2118FE1 /* SettingsStore.swift */; };
 		7368113A800DA7F22FBEF889 /* HotkeyListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12747AC88B4535376FBF01AD /* HotkeyListener.swift */; };
 		794380AE6FC884EA5DE841C0 /* Vibe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37566B46733DB92748A9EB0E /* Vibe.swift */; };
 		7B6AFA965098B581209DC077 /* ColorSampler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F80D747BA6C33500C600EFE /* ColorSampler.swift */; };
@@ -29,9 +31,12 @@
 		9C53CC05BC8EF121ABD452E0 /* AutoScrollDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 984BB9EF640943D8489D0DC8 /* AutoScrollDriver.swift */; };
 		B38AB663D83EC77B7FCF187C /* ImageStitcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED0D9092CB2EDA2574632AA2 /* ImageStitcher.swift */; };
 		B6E43450CE86BF85CF03D54E /* EditorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A1759140D5794C1E49BD1A /* EditorWindowController.swift */; };
+		B74E93B4F12886860EF660FC /* ReviewScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3131698775C7B14B5106DCFA /* ReviewScheduler.swift */; };
 		B7F550CEFA04EE0BCC5B987A /* BeautifyRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B0E33D43DCD70F28F2A164D /* BeautifyRenderer.swift */; };
+		B9A81ACDF09B8DD0BAFCDBC8 /* Permissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1583D1329D89B1AD7E7C5D06 /* Permissions.swift */; };
 		BC14B1025E7F404179E370BF /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C3B50ED293AD51989C7DDBE /* libsqlite3.tbd */; };
 		BEA5C29709A06E513CD44A0F /* RecentDestinationsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B843CE21938740F1A50038C2 /* RecentDestinationsStore.swift */; };
+		C1A86B5E67B4A6DDF1EA8F95 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EB3EAE7E6F09E824087779C /* SettingsView.swift */; };
 		CD11723BEF0842529F399369 /* WindowHighlighterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43D20D9FEC069A3305F26EB5 /* WindowHighlighterController.swift */; };
 		CED9A97A06DBB1E340749DF4 /* LightscreenApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D93AA5928EACA3C0CED0C80 /* LightscreenApp.swift */; };
 		D35020AE73EB4E7C12682667 /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF1DCFC20F1ECB6E13286F4 /* MenuBarView.swift */; };
@@ -52,11 +57,16 @@
 		0B47227BDBAC5AEA43DCC51D /* DeviceFrame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceFrame.swift; sourceTree = "<group>"; };
 		0FF642DC77E5FB12698277CC /* CaptureEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureEngine.swift; sourceTree = "<group>"; };
 		12747AC88B4535376FBF01AD /* HotkeyListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyListener.swift; sourceTree = "<group>"; };
+		12F42B9B847D235EE2118FE1 /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
 		13B37DC797B64D518D4CEF59 /* FloatingPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingPreviewView.swift; sourceTree = "<group>"; };
+		1583D1329D89B1AD7E7C5D06 /* Permissions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Permissions.swift; sourceTree = "<group>"; };
 		1B0E33D43DCD70F28F2A164D /* BeautifyRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeautifyRenderer.swift; sourceTree = "<group>"; };
 		1CA630FAC1722BF20A5E5FD4 /* AspectRatio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AspectRatio.swift; sourceTree = "<group>"; };
 		1CD2B96438FF45B09D8DACF8 /* Lightscreen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lightscreen.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		27BA60881E865BE782C681D4 /* ScrollCaptureViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollCaptureViews.swift; sourceTree = "<group>"; };
+		2EB3EAE7E6F09E824087779C /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		2EBD30E79A283FC42DD2A468 /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
+		3131698775C7B14B5106DCFA /* ReviewScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewScheduler.swift; sourceTree = "<group>"; };
 		37566B46733DB92748A9EB0E /* Vibe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Vibe.swift; sourceTree = "<group>"; };
 		3F80D747BA6C33500C600EFE /* ColorSampler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorSampler.swift; sourceTree = "<group>"; };
 		43D20D9FEC069A3305F26EB5 /* WindowHighlighterController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowHighlighterController.swift; sourceTree = "<group>"; };
@@ -126,7 +136,10 @@
 				C7CAD90E27D0B43BF186FF80 /* LibraryStore.swift */,
 				049D773CBFA3A25EC2EF6908 /* OutputMode.swift */,
 				5CAF354F164AB0D34E1FA533 /* PendingCapture.swift */,
+				1583D1329D89B1AD7E7C5D06 /* Permissions.swift */,
 				B843CE21938740F1A50038C2 /* RecentDestinationsStore.swift */,
+				3131698775C7B14B5106DCFA /* ReviewScheduler.swift */,
+				12F42B9B847D235EE2118FE1 /* SettingsStore.swift */,
 				046EEF985D7B646CAFCFE625 /* Splitter.swift */,
 				DA8D4E2F97E873278305DCCF /* ThumbnailLoader.swift */,
 				37566B46733DB92748A9EB0E /* Vibe.swift */,
@@ -154,6 +167,7 @@
 				B373E10E3CE01A69742979F1 /* PickerWindowController.swift */,
 				8E28F85FE0D09B672BF65CEE /* RegionSelectorController.swift */,
 				90EE4E00D4FB2BCEAE39A699 /* ScrollCaptureController.swift */,
+				2EBD30E79A283FC42DD2A468 /* SettingsWindowController.swift */,
 				43D20D9FEC069A3305F26EB5 /* WindowHighlighterController.swift */,
 			);
 			path = App;
@@ -170,6 +184,7 @@
 				D186D68925A8B1A832900C54 /* PickerView.swift */,
 				E11537568E2D2356D508B64A /* SavePopoverView.swift */,
 				27BA60881E865BE782C681D4 /* ScrollCaptureViews.swift */,
+				2EB3EAE7E6F09E824087779C /* SettingsView.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -277,13 +292,18 @@
 				D35020AE73EB4E7C12682667 /* MenuBarView.swift in Sources */,
 				D451BC80AF7F5A8FC4F6D8B9 /* OutputMode.swift in Sources */,
 				58C1E373F030974B93C93FC8 /* PendingCapture.swift in Sources */,
+				B9A81ACDF09B8DD0BAFCDBC8 /* Permissions.swift in Sources */,
 				1CCF1F2F27DC1474E9F7F9B7 /* PickerView.swift in Sources */,
 				06D436DDEE3CADCAF058B3A6 /* PickerWindowController.swift in Sources */,
 				BEA5C29709A06E513CD44A0F /* RecentDestinationsStore.swift in Sources */,
 				280A9232001542F8C3CF6BB1 /* RegionSelectorController.swift in Sources */,
+				B74E93B4F12886860EF660FC /* ReviewScheduler.swift in Sources */,
 				4135E83152D7C581FC43EBD6 /* SavePopoverView.swift in Sources */,
 				00D4FF4F42A0CD1FF7B1C8EF /* ScrollCaptureController.swift in Sources */,
 				EEFA608DA882F5B5B033C1BF /* ScrollCaptureViews.swift in Sources */,
+				5DACC37ABCC79536D1240894 /* SettingsStore.swift in Sources */,
+				C1A86B5E67B4A6DDF1EA8F95 /* SettingsView.swift in Sources */,
+				5D10EFAB1423A20750F95CE4 /* SettingsWindowController.swift in Sources */,
 				81FD86961D552A7BA8F723CE /* Splitter.swift in Sources */,
 				9A8C4646C3E58C5FCC75F1D0 /* ThumbnailLoader.swift in Sources */,
 				794380AE6FC884EA5DE841C0 /* Vibe.swift in Sources */,

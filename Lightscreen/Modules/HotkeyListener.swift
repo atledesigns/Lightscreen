@@ -14,10 +14,16 @@ final class HotkeyListener {
     private var hotKeyRef: EventHotKeyRef?
     private var handlerRef: EventHandlerRef?
 
+    /// The shortcut currently registered, so a rebind can be applied live.
+    private var combo: HotKeyCombo = .default
+
     /// A private four-letter tag so the system knows this shortcut belongs to us.
     private let signature: OSType = 0x4C534352 // "LSCR"
 
-    func start() {
+    /// Begin listening. Pass the user's saved shortcut, or default to ⌘⇧7.
+    func start(combo: HotKeyCombo = .default) {
+        self.combo = combo
+
         // Tell the system we care about "a registered shortcut was pressed" events.
         var eventType = EventTypeSpec(
             eventClass: OSType(kEventClassKeyboard),
@@ -40,11 +46,25 @@ final class HotkeyListener {
             &handlerRef
         )
 
-        // Register ⌘⇧7. (kVK_ANSI_7 is the "7" key; cmdKey + shiftKey are the modifiers.)
+        registerHotKey()
+    }
+
+    /// Swap in a new shortcut without restarting the listener — used when the
+    /// user rebinds it in Settings.
+    func rebind(to combo: HotKeyCombo) {
+        self.combo = combo
+        if let hotKeyRef {
+            UnregisterEventHotKey(hotKeyRef)
+            self.hotKeyRef = nil
+        }
+        registerHotKey()
+    }
+
+    private func registerHotKey() {
         let hotKeyID = EventHotKeyID(signature: signature, id: 1)
         RegisterEventHotKey(
-            UInt32(kVK_ANSI_7),
-            UInt32(cmdKey | shiftKey),
+            combo.keyCode,
+            combo.carbonModifiers,
             hotKeyID,
             GetApplicationEventTarget(),
             0,

@@ -48,7 +48,10 @@ final class EditorModel: ObservableObject {
     /// reused, so we don't re-scan pixels on every keystroke.
     private let autoColors: (Color, Color)
 
-    init(input: EditorInput, store: LibraryStore, recents: RecentDestinationsStore, vibes: VibeStore) {
+    /// Whether the save-button glow + filename shimmer plays on save (Settings).
+    let saveDelightEnabled: Bool
+
+    init(input: EditorInput, store: LibraryStore, recents: RecentDestinationsStore, vibes: VibeStore, settings: SettingsStore) {
         self.original = input.image
         self.previewSource = input.image.downscaled(maxPixel: 1100)
         self.thumbSource = input.image.downscaled(maxPixel: 180)
@@ -57,6 +60,7 @@ final class EditorModel: ObservableObject {
         self.recents = recents
         self.vibes = vibes
         self.name = input.suggestedName
+        self.saveDelightEnabled = settings.saveDelight
         let sampled = ColorSampler.dominantColors(input.image, count: 2)
         self.autoColors = (sampled.first ?? .blue, sampled.count > 1 ? sampled[1] : .purple)
         var draft = BeautifyDraft.makeDefault(from: input.image)
@@ -69,6 +73,16 @@ final class EditorModel: ObservableObject {
         // it always opens at its own shape so nothing's cropped off.
         if input.captureMode == CaptureMode.fullPage.rawValue {
             draft.ratioOption = .original
+        }
+        // Honour the default vibe from Settings, if one is set, so Beautified
+        // catches open already dressed in your house style.
+        if let vibeID = settings.defaultVibeID,
+           let vibe = vibes.all.first(where: { $0.id == vibeID }) {
+            let (c1, c2, angle) = vibe.resolvedColors(for: input.image)
+            draft.backgroundKind = .gradient
+            draft.color1 = c1
+            draft.color2 = c2
+            draft.angle = angle
         }
         self.draft = draft
         rerender()
@@ -250,16 +264,18 @@ final class EditorWindowController: NSObject, NSWindowDelegate {
     private let store: LibraryStore
     private let recents: RecentDestinationsStore
     private let vibes: VibeStore
+    private let settings: SettingsStore
     private var window: NSWindow?
     private var model: EditorModel?
 
     /// Set by the app: called after a save so the library window can refresh.
     var onLibraryChanged: (() -> Void)?
 
-    init(store: LibraryStore, recents: RecentDestinationsStore, vibes: VibeStore) {
+    init(store: LibraryStore, recents: RecentDestinationsStore, vibes: VibeStore, settings: SettingsStore) {
         self.store = store
         self.recents = recents
         self.vibes = vibes
+        self.settings = settings
     }
 
     /// Open the editor on a just-taken capture (the Beautified path).
@@ -275,7 +291,7 @@ final class EditorWindowController: NSObject, NSWindowDelegate {
 
     /// Open the editor on any image + its facts (also used for past library shots).
     func open(_ input: EditorInput) {
-        let model = EditorModel(input: input, store: store, recents: recents, vibes: vibes)
+        let model = EditorModel(input: input, store: store, recents: recents, vibes: vibes, settings: settings)
         model.onClose = { [weak self] in self?.close() }
         model.onSaved = { [weak self] in
             self?.onLibraryChanged?()
@@ -284,7 +300,7 @@ final class EditorWindowController: NSObject, NSWindowDelegate {
         self.model = model
 
         let win = window ?? makeWindow()
-        win.contentView = NSHostingView(rootView: EditorView(model: model, vibes: vibes))
+        win.contentView = NSHostingView(rootView: AccentRoot(settings: settings) { EditorView(model: model, vibes: vibes) })
         window = win
 
         NSApp.activate()

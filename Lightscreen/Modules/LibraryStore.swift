@@ -230,6 +230,43 @@ final class LibraryStore {
         return destination
     }
 
+    // MARK: - Settings (the little key/value table)
+
+    /// Reads a stored setting, or nil if it was never written. Backs things like
+    /// the 60-day review prompt's "last shown" stamp.
+    func setting(_ key: String) -> String? {
+        let sql = "SELECT value FROM settings WHERE key = ?;"
+        var stmt: OpaquePointer?
+        guard sqlite3_prepare_v2(db, sql, -1, &stmt, nil) == SQLITE_OK else { return nil }
+        defer { sqlite3_finalize(stmt) }
+        sqlite3_bind_text(stmt, 1, key, -1, transient)
+        guard sqlite3_step(stmt) == SQLITE_ROW, let c = sqlite3_column_text(stmt, 0) else { return nil }
+        return String(cString: c)
+    }
+
+    /// Writes (or overwrites) a setting.
+    func setSetting(_ value: String, forKey key: String) {
+        let sql = "INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value;"
+        var stmt: OpaquePointer?
+        guard sqlite3_prepare_v2(db, sql, -1, &stmt, nil) == SQLITE_OK else { return }
+        defer { sqlite3_finalize(stmt) }
+        sqlite3_bind_text(stmt, 1, key, -1, transient)
+        sqlite3_bind_text(stmt, 2, value, -1, transient)
+        if sqlite3_step(stmt) != SQLITE_DONE {
+            NSLog("Lightscreen: could not save setting \(key) — \(lastMessage)")
+        }
+    }
+
+    /// A `Date` setting, stored as an ISO string. Convenience over the raw pair.
+    func dateSetting(_ key: String) -> Date? {
+        guard let raw = setting(key) else { return nil }
+        return Self.iso.date(from: raw)
+    }
+
+    func setDateSetting(_ date: Date, forKey key: String) {
+        setSetting(Self.iso.string(from: date), forKey: key)
+    }
+
     // MARK: - Setup
 
     private func openDatabase() {

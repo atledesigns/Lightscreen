@@ -1,5 +1,6 @@
 import AppKit
 import SwiftUI
+import UserNotifications
 
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
@@ -13,6 +14,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let outputMode = OutputModeStore()
     private let hotkey = HotkeyListener()
     private lazy var picker = PickerWindowController(outputMode: outputMode)
+
+    // Stage 12: every tunable preference, in one place.
+    private let settings = SettingsStore()
 
     // Stage 2: real capture + storage.
     private let library = LibraryStore()
@@ -31,17 +35,31 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     // Stage 3: post-capture floating preview (drag out / click to save / ignore).
     private let recents = RecentDestinationsStore()
-    private lazy var preview = FloatingPreviewController(library: library, recents: recents)
+    private lazy var preview = FloatingPreviewController(library: library, recents: recents, settings: settings)
+
+    // Stage 11: the once-every-60-days "tidy your library" nudge.
+    private lazy var reviewScheduler = ReviewScheduler(store: library)
 
     // Stage 5: the real Library window (date-grouped grid of every shot).
-    private lazy var libraryWindow = LibraryWindowController(store: library)
+    private lazy var libraryWindow = LibraryWindowController(
+        store: library, recents: recents, settings: settings, reviewScheduler: reviewScheduler
+    )
+
+    // Stage 12: the Settings window.
+    private lazy var settingsWindow: SettingsWindowController = {
+        let controller = SettingsWindowController(
+            settings: settings, outputMode: outputMode, vibes: vibes, store: library
+        )
+        controller.onReviewNow = { [weak self] in self?.libraryWindow.showInReviewMode() }
+        return controller
+    }()
 
     // Stage 8: the vibe library (built-in + custom backdrop moods).
     private let vibes = VibeStore()
 
     // Stage 7: the Beautify editor (gradient backdrop, padding, shadow, corners).
     private lazy var editor: EditorWindowController = {
-        let controller = EditorWindowController(store: library, recents: recents, vibes: vibes)
+        let controller = EditorWindowController(store: library, recents: recents, vibes: vibes, settings: settings)
         controller.onLibraryChanged = { [weak self] in self?.libraryWindow.refresh() }
         return controller
     }()
@@ -59,12 +77,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             self.sourceAppBundleID = NSWorkspace.shared.frontmostApplication?.bundleIdentifier
             self.picker.toggle()
         }
-        hotkey.start()
+        hotkey.start(combo: settings.hotkey)
+        // Rebinding the shortcut in Settings re-registers it live.
+        settings.onHotkeyChanged = { [weak self] combo in self?.hotkey.rebind(to: combo) }
 
         picker.onCapture = { [weak self] mode in self?.handleCapture(mode) }
 
         // Double-click / "Open in editor" in the library opens the Beautify editor.
         libraryWindow.onOpenEditor = { [weak self] capture in self?.openInEditor(capture) }
+
+        // Stage 11: the 60-day review nudge. Tapping its notification opens the
+        // library straight into review (multi-select) mode.
+        UNUserNotificationCenter.current().delegate = self
+        reviewScheduler.onReviewTapped = { [weak self] in self?.libraryWindow.showInReviewMode() }
+        reviewScheduler.checkAtLaunch()
     }
 
     /// Sends a fresh capture either to the editor (Beautified) or the floating
@@ -96,15 +122,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// Routes a chosen capture mode. Region is live in Stage 2; the others land
     /// in later stages.
     private func handleCapture(_ mode: CaptureMode) {
+        setMenuBarCapturing(true)
         switch mode {
         case .region:
             regionSelector.begin { [weak self] globalRect in
-                guard let self, let rect = globalRect else { return } // nil = cancelled
+                guard let self, let rect = globalRect else { self?.setMenuBarCapturing(false); return } // nil = cancelled
                 Task { await self.captureAndSave(rect: rect) }
             }
         case .window:
             windowHighlighter.begin { [weak self] window in
-                guard let self, let window else { return } // nil = Esc / empty desktop
+                guard let self, let window else { self?.setMenuBarCapturing(false); return } // nil = Esc / empty desktop
                 Task { await self.captureWindowAndShow(window) }
             }
         case .fullPage:
@@ -114,6 +141,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func captureWindowAndShow(_ window: OnScreenWindow) async {
+        defer { setMenuBarCapturing(false) }
         do {
             // A beat so the overlay is fully gone before we grab pixels.
             try await Task.sleep(for: .milliseconds(60))
@@ -144,6 +172,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func captureAndSave(rect: CGRect) async {
+        defer { setMenuBarCapturing(false) }
         do {
             // A beat so the dimmed overlay is fully gone before we grab pixels.
             try await Task.sleep(for: .milliseconds(60))
@@ -176,14 +205,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func setupStatusItem() {
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = item.button {
-            let image = NSImage(systemSymbolName: "camera.fill", accessibilityDescription: "Lightscreen")
-            image?.isTemplate = true
-            button.image = image
-            button.image?.size = NSSize(width: 18, height: 18)
             button.action = #selector(toggleMenu)
             button.target = self
         }
         statusItem = item
+        setMenuBarCapturing(false)
+    }
+
+    /// The menu bar glyph has two faces: a quiet outline at rest, and a filled,
+    /// accent-tinted camera while a capture is happening — so you can see at a
+    /// glance that Lightscreen is mid-catch.
+    private func setMenuBarCapturing(_ active: Bool) {
+        guard let button = statusItem?.button else { return }
+        let image = NSImage(systemSymbolName: active ? "camera.fill" : "camera",
+                            accessibilityDescription: "Lightscreen")
+        image?.isTemplate = !active // tinted when active, template (auto B/W) at rest
+        button.image = image
+        button.image?.size = NSSize(width: 18, height: 18)
+        button.contentTintColor = active ? NSColor(settings.accentColor) : nil
     }
 
     // MARK: - Menu bar dropdown
@@ -208,7 +247,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let root = MenuBarView(
             onCapture: { [weak self] mode in self?.menuCapture(mode) },
             onShowLibrary: { [weak self] in self?.showLibrary() },
-            onSettings: { [weak self] in self?.openPlaceholder(id: "settings", title: "Settings", message: "Settings will live here.\n(Coming in a later stage.)") },
+            onSettings: { [weak self] in self?.showSettings() },
             onQuit: { NSApp.terminate(nil) }
         )
         let host = NSHostingController(rootView: root)
@@ -227,6 +266,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func showLibrary() {
         menuPopover?.performClose(nil)
         libraryWindow.show()
+    }
+
+    /// Opens (or re-focuses) the Settings window.
+    private func showSettings() {
+        menuPopover?.performClose(nil)
+        settingsWindow.show()
     }
 
     /// Opens (or re-focuses) a simple stand-in window for features not yet built.
@@ -250,5 +295,30 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         placeholders[id] = window
         NSApp.activate()
         window.makeKeyAndOrderFront(nil)
+    }
+}
+
+// MARK: - 60-day review notification (Stage 11)
+
+extension AppDelegate: UNUserNotificationCenterDelegate {
+    /// Show the review nudge even when Lightscreen is the active app.
+    nonisolated func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification,
+        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
+        completionHandler([.banner, .sound])
+    }
+
+    /// Tapping the nudge opens the library ready for a batch tidy.
+    nonisolated func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
+        Task { @MainActor in
+            reviewScheduler.onReviewTapped?()
+            completionHandler()
+        }
     }
 }
