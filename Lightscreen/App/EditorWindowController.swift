@@ -20,9 +20,12 @@ final class EditorModel: ObservableObject {
     private let original: NSImage
     /// A shrunk copy used for the live preview, so sliders stay buttery on big shots.
     private let previewSource: NSImage
+    /// A tiny copy used to render the vibe-strip thumbnails (lots of them, fast).
+    private let thumbSource: NSImage
     private let input: EditorInput
     private let store: LibraryStore
     let recents: RecentDestinationsStore
+    let vibes: VibeStore
 
     @Published var name: String
     @Published var draft: BeautifyDraft
@@ -33,13 +36,21 @@ final class EditorModel: ObservableObject {
     /// Fired when the user backs out without saving.
     var onClose: (() -> Void)?
 
-    init(input: EditorInput, store: LibraryStore, recents: RecentDestinationsStore) {
+    /// The two colours the Auto vibe lands on for this image — sampled once and
+    /// reused, so we don't re-scan pixels on every keystroke.
+    private let autoColors: (Color, Color)
+
+    init(input: EditorInput, store: LibraryStore, recents: RecentDestinationsStore, vibes: VibeStore) {
         self.original = input.image
         self.previewSource = input.image.downscaled(maxPixel: 1100)
+        self.thumbSource = input.image.downscaled(maxPixel: 180)
         self.input = input
         self.store = store
         self.recents = recents
+        self.vibes = vibes
         self.name = input.suggestedName
+        let sampled = ColorSampler.dominantColors(input.image, count: 2)
+        self.autoColors = (sampled.first ?? .blue, sampled.count > 1 ? sampled[1] : .purple)
         self.draft = BeautifyDraft.makeDefault(from: input.image)
         rerender()
     }
@@ -47,6 +58,54 @@ final class EditorModel: ObservableObject {
     /// Repaint the preview from the current draft. Called on every change.
     func rerender() {
         rendered = BeautifyRenderer.render(previewSource, style: draft.toStyle())
+    }
+
+    // MARK: - Vibes
+
+    /// Apply a vibe: swap the backdrop to its gradient (Auto re-samples the
+    /// image), leaving padding, shadow, and corners untouched.
+    func apply(_ vibe: Vibe) {
+        let (c1, c2, angle) = vibe.color1 != nil
+            ? (vibe.color1!, vibe.color2!, vibe.angle)
+            : (autoColors.0, autoColors.1, 135.0)
+        draft.backgroundKind = .gradient
+        draft.color1 = c1
+        draft.color2 = c2
+        draft.angle = angle
+        rerender()
+    }
+
+    /// A small preview of the current screenshot dressed in `vibe` — what the
+    /// strip thumbnails show, so you compare real output, not swatches. Keeps the
+    /// current padding/shadow/corners and only swaps the backdrop.
+    func thumbnail(for vibe: Vibe) -> NSImage? {
+        var d = draft
+        let (c1, c2, angle) = vibe.color1 != nil
+            ? (vibe.color1!, vibe.color2!, vibe.angle)
+            : (autoColors.0, autoColors.1, 135.0)
+        d.backgroundKind = .gradient
+        d.color1 = c1; d.color2 = c2; d.angle = angle
+        return BeautifyRenderer.render(thumbSource, style: d.toStyle())
+    }
+
+    /// Which vibe (if any) the current backdrop exactly matches — drives the
+    /// active highlight. A manual colour tweak makes this nil.
+    var activeVibeID: String? {
+        guard draft.backgroundKind == .gradient else { return nil }
+        for vibe in vibes.all {
+            let (c1, c2, angle) = vibe.color1 != nil
+                ? (vibe.color1!, vibe.color2!, vibe.angle)
+                : (autoColors.0, autoColors.1, 135.0)
+            if draft.color1 == c1, draft.color2 == c2, draft.angle == angle {
+                return vibe.id
+            }
+        }
+        return nil
+    }
+
+    /// Save the current backdrop as a new custom vibe.
+    func saveCurrentAsVibe(named name: String) {
+        vibes.add(name: name, color1: draft.color1, color2: draft.color2, angle: draft.angle)
     }
 
     /// True when the backdrop is transparent — the view shows a checkerboard
@@ -106,15 +165,17 @@ final class EditorModel: ObservableObject {
 final class EditorWindowController: NSObject, NSWindowDelegate {
     private let store: LibraryStore
     private let recents: RecentDestinationsStore
+    private let vibes: VibeStore
     private var window: NSWindow?
     private var model: EditorModel?
 
     /// Set by the app: called after a save so the library window can refresh.
     var onLibraryChanged: (() -> Void)?
 
-    init(store: LibraryStore, recents: RecentDestinationsStore) {
+    init(store: LibraryStore, recents: RecentDestinationsStore, vibes: VibeStore) {
         self.store = store
         self.recents = recents
+        self.vibes = vibes
     }
 
     /// Open the editor on a just-taken capture (the Beautified path).
@@ -130,7 +191,7 @@ final class EditorWindowController: NSObject, NSWindowDelegate {
 
     /// Open the editor on any image + its facts (also used for past library shots).
     func open(_ input: EditorInput) {
-        let model = EditorModel(input: input, store: store, recents: recents)
+        let model = EditorModel(input: input, store: store, recents: recents, vibes: vibes)
         model.onClose = { [weak self] in self?.close() }
         model.onSaved = { [weak self] in
             self?.onLibraryChanged?()
@@ -139,7 +200,7 @@ final class EditorWindowController: NSObject, NSWindowDelegate {
         self.model = model
 
         let win = window ?? makeWindow()
-        win.contentView = NSHostingView(rootView: EditorView(model: model))
+        win.contentView = NSHostingView(rootView: EditorView(model: model, vibes: vibes))
         window = win
 
         NSApp.activate()

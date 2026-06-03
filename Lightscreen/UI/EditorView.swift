@@ -5,11 +5,20 @@ import SwiftUI
 /// control change repaints the canvas instantly — there's no Apply button.
 struct EditorView: View {
     @ObservedObject var model: EditorModel
+    @ObservedObject var vibes: VibeStore
     @State private var showingSave = false
+
+    // The "name this vibe" flow. `nameDialogTarget` is nil when creating a new
+    // vibe, or a custom vibe's id when renaming one.
+    @State private var showingNameDialog = false
+    @State private var nameDialogText = ""
+    @State private var nameDialogTarget: String?
 
     var body: some View {
         VStack(spacing: 0) {
             topBar
+            Divider()
+            vibeStrip
             Divider()
             HStack(spacing: 0) {
                 canvas
@@ -21,6 +30,7 @@ struct EditorView: View {
         .frame(minWidth: 820, minHeight: 560)
         // Repaint whenever any knob moves.
         .onChange(of: model.draft) { model.rerender() }
+        .sheet(isPresented: $showingNameDialog) { nameDialog }
     }
 
     // MARK: - Top bar
@@ -69,6 +79,109 @@ struct EditorView: View {
         }
         .padding(.horizontal, 16)
         .frame(height: 52)
+    }
+
+    // MARK: - Vibe strip
+
+    private var vibeStrip: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 12) {
+                ForEach(vibes.all) { vibe in
+                    VibeThumbnail(
+                        vibe: vibe,
+                        image: model.thumbnail(for: vibe),
+                        isActive: model.activeVibeID == vibe.id
+                    )
+                    .onTapGesture { model.apply(vibe) }
+                    .contextMenu {
+                        if vibe.kind == .custom {
+                            Button("Rename…") { startRename(vibe) }
+                            Button("Delete vibe", role: .destructive) { vibes.delete(id: vibe.id) }
+                        }
+                    }
+                }
+
+                addButton
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+        }
+        // Soft fade on the right edge to hint at overflow.
+        .mask(
+            LinearGradient(
+                stops: [
+                    .init(color: .black, location: 0),
+                    .init(color: .black, location: 0.94),
+                    .init(color: .clear, location: 1),
+                ],
+                startPoint: .leading, endPoint: .trailing
+            )
+        )
+        .background(Color(nsColor: .windowBackgroundColor))
+    }
+
+    private var addButton: some View {
+        Button {
+            nameDialogTarget = nil
+            nameDialogText = ""
+            showingNameDialog = true
+        } label: {
+            VStack(spacing: 6) {
+                Image(systemName: "plus")
+                    .font(.system(size: 18, weight: .medium))
+                Text("Save")
+                    .font(.system(size: 10))
+            }
+            .foregroundStyle(.secondary)
+            .frame(width: 84, height: 64)
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .strokeBorder(style: StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
+                    .foregroundStyle(.tertiary)
+            )
+        }
+        .buttonStyle(.plain)
+        .help("Save the current background as a vibe")
+    }
+
+    // MARK: - Name dialog (new vibe / rename)
+
+    private var nameDialog: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text(nameDialogTarget == nil ? "Name this vibe" : "Rename vibe")
+                .font(.headline)
+            TextField("Vibe name", text: $nameDialogText)
+                .textFieldStyle(.roundedBorder)
+                .frame(width: 240)
+                .onSubmit(commitNameDialog)
+            HStack {
+                Spacer()
+                Button("Cancel") { showingNameDialog = false }
+                    .keyboardShortcut(.cancelAction)
+                Button("Save", action: commitNameDialog)
+                    .keyboardShortcut(.defaultAction)
+                    .buttonStyle(.borderedProminent)
+            }
+        }
+        .padding(20)
+        .frame(width: 300)
+    }
+
+    private func startRename(_ vibe: Vibe) {
+        nameDialogTarget = vibe.id
+        nameDialogText = vibe.name
+        showingNameDialog = true
+    }
+
+    private func commitNameDialog() {
+        let name = nameDialogText.trimmingCharacters(in: .whitespaces)
+        guard !name.isEmpty else { showingNameDialog = false; return }
+        if let id = nameDialogTarget {
+            vibes.rename(id: id, to: name)
+        } else {
+            model.saveCurrentAsVibe(named: name)
+        }
+        showingNameDialog = false
     }
 
     // MARK: - Canvas
@@ -180,6 +293,53 @@ struct EditorView: View {
             }
             Slider(value: value, in: range)
         }
+    }
+}
+
+/// One slot in the vibe strip: the current screenshot pre-rendered in this
+/// vibe's backdrop, with a corner glyph and — when it's the chosen one — a bold
+/// border in the vibe's accent colour. Unpicked slots fade back.
+private struct VibeThumbnail: View {
+    let vibe: Vibe
+    let image: NSImage?
+    let isActive: Bool
+
+    var body: some View {
+        VStack(spacing: 5) {
+            ZStack(alignment: .bottomTrailing) {
+                Group {
+                    if let image {
+                        Image(nsImage: image)
+                            .resizable()
+                            .scaledToFill()
+                    } else {
+                        Color.gray.opacity(0.2)
+                    }
+                }
+                .frame(width: 84, height: 56)
+                .clipShape(RoundedRectangle(cornerRadius: 9))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 9)
+                        .strokeBorder(isActive ? vibe.accent : Color.black.opacity(0.12),
+                                      lineWidth: isActive ? 2.5 : 1)
+                )
+
+                Image(systemName: vibe.symbol)
+                    .font(.system(size: 9, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .padding(3)
+                    .background(Circle().fill(.black.opacity(0.45)))
+                    .padding(4)
+            }
+
+            Text(vibe.name)
+                .font(.system(size: 10, weight: isActive ? .semibold : .regular))
+                .foregroundStyle(isActive ? .primary : .secondary)
+                .lineLimit(1)
+                .frame(width: 84)
+        }
+        .opacity(isActive ? 1 : 0.7)
+        .animation(.easeOut(duration: 0.15), value: isActive)
     }
 }
 

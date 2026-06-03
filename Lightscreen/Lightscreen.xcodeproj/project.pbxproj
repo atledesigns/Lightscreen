@@ -19,6 +19,7 @@
 		53F851E7EF6B526E7AA3A676 /* CaptureMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = A18F2CAC601BB7CFE0A35A72 /* CaptureMode.swift */; };
 		58C1E373F030974B93C93FC8 /* PendingCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CAF354F164AB0D34E1FA533 /* PendingCapture.swift */; };
 		7368113A800DA7F22FBEF889 /* HotkeyListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12747AC88B4535376FBF01AD /* HotkeyListener.swift */; };
+		794380AE6FC884EA5DE841C0 /* Vibe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37566B46733DB92748A9EB0E /* Vibe.swift */; };
 		7B6AFA965098B581209DC077 /* ColorSampler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F80D747BA6C33500C600EFE /* ColorSampler.swift */; };
 		9A8C4646C3E58C5FCC75F1D0 /* ThumbnailLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA8D4E2F97E873278305DCCF /* ThumbnailLoader.swift */; };
 		B6E43450CE86BF85CF03D54E /* EditorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A1759140D5794C1E49BD1A /* EditorWindowController.swift */; };
@@ -45,6 +46,7 @@
 		13B37DC797B64D518D4CEF59 /* FloatingPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingPreviewView.swift; sourceTree = "<group>"; };
 		1B0E33D43DCD70F28F2A164D /* BeautifyRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeautifyRenderer.swift; sourceTree = "<group>"; };
 		1CD2B96438FF45B09D8DACF8 /* Lightscreen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lightscreen.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		37566B46733DB92748A9EB0E /* Vibe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Vibe.swift; sourceTree = "<group>"; };
 		3F80D747BA6C33500C600EFE /* ColorSampler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorSampler.swift; sourceTree = "<group>"; };
 		43D20D9FEC069A3305F26EB5 /* WindowHighlighterController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowHighlighterController.swift; sourceTree = "<group>"; };
 		4DF1DCFC20F1ECB6E13286F4 /* MenuBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarView.swift; sourceTree = "<group>"; };
@@ -108,6 +110,7 @@
 				5CAF354F164AB0D34E1FA533 /* PendingCapture.swift */,
 				B843CE21938740F1A50038C2 /* RecentDestinationsStore.swift */,
 				DA8D4E2F97E873278305DCCF /* ThumbnailLoader.swift */,
+				37566B46733DB92748A9EB0E /* Vibe.swift */,
 				C8C5B89C36863067CE20BB1B /* WindowEnumerator.swift */,
 			);
 			path = Modules;
@@ -255,6 +258,7 @@
 				280A9232001542F8C3CF6BB1 /* RegionSelectorController.swift in Sources */,
 				4135E83152D7C581FC43EBD6 /* SavePopoverView.swift in Sources */,
 				9A8C4646C3E58C5FCC75F1D0 /* ThumbnailLoader.swift in Sources */,
+				794380AE6FC884EA5DE841C0 /* Vibe.swift in Sources */,
 				E1547ECAEC22687F1ACE71F8 /* WindowEnumerator.swift in Sources */,
 				CD11723BEF0842529F399369 /* WindowHighlighterController.swift in Sources */,
 			);

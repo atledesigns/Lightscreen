@@ -29,9 +29,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     // Stage 5: the real Library window (date-grouped grid of every shot).
     private lazy var libraryWindow = LibraryWindowController(store: library)
 
+    // Stage 8: the vibe library (built-in + custom backdrop moods).
+    private let vibes = VibeStore()
+
     // Stage 7: the Beautify editor (gradient backdrop, padding, shadow, corners).
     private lazy var editor: EditorWindowController = {
-        let controller = EditorWindowController(store: library, recents: recents)
+        let controller = EditorWindowController(store: library, recents: recents, vibes: vibes)
         controller.onLibraryChanged = { [weak self] in self?.libraryWindow.refresh() }
         return controller
     }()
