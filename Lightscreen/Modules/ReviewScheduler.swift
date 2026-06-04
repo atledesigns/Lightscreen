@@ -26,7 +26,7 @@ final class ReviewScheduler {
     /// True when it's been ≥60 days since we last prompted and there's something
     /// worth tidying. Drives the in-window banner.
     var isReviewDue: Bool {
-        guard store.fetchAll().count >= 1 else { return false }
+        guard store.count() >= 1 else { return false }
         guard let last = store.dateSetting(Self.stampKey) else { return false }
         return Date().timeIntervalSince(last) >= Self.interval
     }

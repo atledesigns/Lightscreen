@@ -157,10 +157,11 @@ private struct BeautifySettings: View {
                     ForEach(vibes.custom) { vibe in
                         HStack {
                             if renaming == vibe.id {
-                                TextField("Name", text: $draftName, onCommit: {
-                                    vibes.rename(id: vibe.id, to: draftName); renaming = nil
-                                })
-                                .textFieldStyle(.roundedBorder)
+                                TextField("Name", text: $draftName)
+                                    .onSubmit {
+                                        vibes.rename(id: vibe.id, to: draftName); renaming = nil
+                                    }
+                                    .textFieldStyle(.roundedBorder)
                             } else {
                                 Text(vibe.name)
                                 Spacer()

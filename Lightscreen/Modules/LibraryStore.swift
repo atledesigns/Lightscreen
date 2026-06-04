@@ -169,6 +169,17 @@ final class LibraryStore {
         return result
     }
 
+    /// How many shots are in the library — a single COUNT(*), so it stays cheap
+    /// even when the library is large (nothing gets loaded into memory).
+    func count() -> Int {
+        let sql = "SELECT COUNT(*) FROM captures;"
+        var stmt: OpaquePointer?
+        guard sqlite3_prepare_v2(db, sql, -1, &stmt, nil) == SQLITE_OK else { return 0 }
+        defer { sqlite3_finalize(stmt) }
+        guard sqlite3_step(stmt) == SQLITE_ROW else { return 0 }
+        return Int(sqlite3_column_int64(stmt, 0))
+    }
+
     /// All shots, bucketed into ordered date groups for the library grid.
     func fetchByDateGroup(now: Date = Date()) -> [(group: DateGroup, captures: [Capture])] {
         let all = fetchAll()
